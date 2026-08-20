@@ -2,7 +2,8 @@
 
 [![CI](https://github.com/thisisnikan/biochar-ad-digital-twin/actions/workflows/ci.yml/badge.svg)](https://github.com/thisisnikan/biochar-ad-digital-twin/actions)
 
-A reproducible Python workflow for analysing batch biomethane potential (BMP)
+A reproducible kinetic-modelling and benchmarking workflow for analysing batch
+biomethane potential (BMP)
 experiments with biochar amendment. It fits all dose–temperature conditions
 simultaneously, quantifies goodness of fit, and estimates parameter uncertainty
 with a batch-aware residual bootstrap.
@@ -27,6 +28,8 @@ represents biochar dose and temperature explicitly:
 - robust global least-squares estimation;
 - residual-bootstrap uncertainty that preserves batch structure;
 - reproducible CSV, JSON and publication-ready PNG outputs.
+- model benchmarking with AICc, BIC and late-time holdout prediction.
+- provenance-labelled literature endpoints and published kinetic parameters.
 
 ## Model
 
@@ -63,8 +66,27 @@ To fit an experimental dataset:
 biochar-ad fit path/to/bmp_data.csv --output outputs
 ```
 
+To compare first-order, modified Gompertz, modified logistic and Cone models:
+
+```bash
+biochar-ad compare path/to/bmp_data.csv --output outputs
+```
+
+The comparison is written to `model_comparison.csv`. Do not select a model from
+R² alone; inspect AICc, BIC, holdout error, residuals and parameter plausibility.
+
 Required columns are `batch_id`, `time_days`, `dose_g_l`, `temperature_c`, and
 `methane_ml_g_vs`.
+
+## Literature evidence
+
+`data/literature/` contains cited numerical evidence from three primary studies,
+including the 2026 saline-aquaculture-sludge study co-authored by previously
+contacted researcher Nazli Pelin Kocatürk Schumacher. Published endpoints,
+aggregate effects and author-fitted kinetic parameters are stored separately and
+are never presented as raw time-series measurements. See
+[`data/literature/README.md`](data/literature/README.md) for provenance and reuse
+constraints.
 
 ## Quality controls
 
@@ -81,6 +103,9 @@ Synthetic data tests software behaviour, not scientific validity. A meaningful
 next step is to fit independent experimental BMP data, inspect residuals, test
 parameter identifiability, and compare the model against simpler Gompertz and
 first-order baselines using information criteria or held-out prediction.
+
+The detailed scientific limitations and validation protocol are documented in
+[`docs/SCIENTIFIC_VALIDATION.md`](docs/SCIENTIFIC_VALIDATION.md).
 
 ## License
 

@@ -1,0 +1,4 @@
+source_id,effect_id,material,scope,effect_min_pct,effect_max_pct,data_kind,doi,source_url,notes
+senol_2026,biochar_all_salinities,biochar,"freshwater, brackish and marine conditions",5.9,11.3,published_aggregate_effect,10.1016/j.biortech.2026.134345,https://pubmed.ncbi.nlm.nih.gov/41791610/,"Range reported across salinities; do not assign either bound to a specific condition"
+senol_2026,zeolite_brackish,zeolite,brackish,7.7,7.7,published_condition_effect,10.1016/j.biortech.2026.134345,https://pubmed.ncbi.nlm.nih.gov/41791610/,"Relative methane-yield increase versus the matching control"
+senol_2026,zeolite_marine,zeolite,marine,15.7,15.7,published_condition_effect,10.1016/j.biortech.2026.134345,https://pubmed.ncbi.nlm.nih.gov/41791610/,"Relative methane-yield increase versus the matching control"
