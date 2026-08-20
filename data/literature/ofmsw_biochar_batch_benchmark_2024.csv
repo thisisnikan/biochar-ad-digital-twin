@@ -1,0 +1,6 @@
+study_id,biochar_id,biochar_feedstock,pyrolysis_temp_c,biochar_pH,surface_area_m2_g,pore_size_nm,c_pct,h_pct,n_pct,dose_pct_w_w_ts,control_bmp_ml_ch4_g_vs,reported_effect_pct_vs_control,effect_direction,substrate,isr_vs,temperature_condition,duration_days,source
+frontiers_2024_ofmsw,BC1,maritime pine,700,7.4,6.04,4.73,71.49,2.72,0.28,1,248,-30,inhibitory,OFMSW,2,mesophilic,22,Article text + Tables 2/4/5
+frontiers_2024_ofmsw,BC2,wood residues,450,8.7,7.78,6.40,77.42,2.41,0.70,1,248,-19,inhibitory,OFMSW,2,mesophilic,22,Article text + Tables 2/4/5
+frontiers_2024_ofmsw,BC3,beech and oak,700,7.5,9.78,10.39,74.40,2.78,0.32,1,248,8,enhancing,OFMSW,2,mesophilic,22,Article text + Tables 2/4/5
+frontiers_2024_ofmsw,BC3,beech and oak,700,7.5,9.78,10.39,74.40,2.78,0.32,5,248,19,enhancing,OFMSW,2,mesophilic,22,Article text + Tables 2/4/5
+frontiers_2024_ofmsw,BC3,beech and oak,700,7.5,9.78,10.39,74.40,2.78,0.32,10,248,0,not_significantly_different,OFMSW,2,mesophilic,22,Article text + Tables 2/4/5
