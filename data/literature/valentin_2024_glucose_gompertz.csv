@@ -1,0 +1,6 @@
+study_id,dose_g_l,cumulative_bmp_ml_g_vs,rmse,r2,aic,gompertz_bmp_ml_g_vs,rmax_ml_g_vs_day,k_day_1,lag_day,temperature_c,substrate,source_table
+valentin_2024,0,135.06,4.73,0.91,4384.94,128.82,26.32,0.20,0.76,37,glucose,Table 3
+valentin_2024,2,229.76,5.14,0.99,4732.12,225.04,38.27,0.17,0.42,37,glucose,Table 3
+valentin_2024,4,302.56,11.31,0.98,6321.89,372.05,47.39,0.12,0.47,37,glucose,Table 3
+valentin_2024,6,334.71,12.88,0.98,7133.37,381.13,59.95,0.15,0.51,37,glucose,Table 3
+valentin_2024,8,390.33,11.27,0.98,7021.09,394.16,90.97,0.23,0.10,37,glucose,Table 3
