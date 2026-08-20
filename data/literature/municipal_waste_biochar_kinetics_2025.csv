@@ -1,0 +1,4 @@
+study_id,treatment,biochar_ratio_g_g_vs,specific_methane_nm3_kg_vs,specific_gas_nm3_kg_vs,k_day_1,rmax_ml_g_vs_day,lag_day,rmse_first_order_nm3_kg_vs,rmse_gompertz_nm3_kg_vs,max_ch4_pct,substrate,source_table
+jmirx_2025_municipal_waste,control,0,0.204,0.540,0.57,76.12,0,10.4,6.82,68.5,organic municipal solid waste,Table 6
+jmirx_2025_municipal_waste,biochar_low,0.12,0.133,0.567,0.69,62.42,0,5.74,5.59,86.0,organic municipal solid waste,Table 6
+jmirx_2025_municipal_waste,biochar_high,0.24,0.177,0.500,0.58,65.17,0,9.64,3.39,76.5,organic municipal solid waste,Table 6
