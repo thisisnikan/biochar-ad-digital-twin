@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from .analysis import compare_models, leave_one_batch_out
 from .data import generate_demo_dataset
 from .fit import bootstrap_parameters, fit_global
 from .report import save_report
@@ -34,14 +35,27 @@ def main() -> None:
 
     parameters, metrics = fit_global(frame)
     save_report(frame, parameters, metrics, args.output)
+    comparison = compare_models(frame)
+    validation = leave_one_batch_out(frame)
+    comparison.to_csv(args.output / "model_comparison.csv", index=False)
+    validation.to_csv(args.output / "leave_one_batch_out.csv", index=False)
     if args.command == "demo":
         bootstrap = bootstrap_parameters(frame, iterations=args.bootstrap)
         bootstrap.describe(percentiles=[0.025, 0.5, 0.975]).to_csv(
             args.output / "bootstrap_summary.csv"
         )
-    print(json.dumps({"parameters": asdict(parameters), "metrics": metrics}, indent=2))
+    print(
+        json.dumps(
+            {
+                "parameters": asdict(parameters),
+                "metrics": metrics,
+                "best_model_by_aicc": comparison.iloc[0]["model"],
+                "mean_held_out_rmse_ml_g_vs": validation["rmse_ml_g_vs"].mean(),
+            },
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":
     main()
-
