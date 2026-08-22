@@ -7,6 +7,16 @@ experiments with biochar amendment. It fits all dose–temperature conditions
 simultaneously, quantifies goodness of fit, and estimates parameter uncertainty
 with a batch-aware residual bootstrap.
 
+## Research question and falsifiable hypothesis
+
+**Question.** Does explicitly modelling biochar dose and temperature explain and
+predict cumulative methane production better than a condition-agnostic kinetic
+baseline?
+
+**Hypothesis.** A shared dose–temperature model will improve held-out-batch
+prediction and AICc relative to a three-parameter modified Gompertz curve. The
+hypothesis is rejected if that gain disappears on independent experimental data.
+
 This project connects chemical-engineering kinetics, anaerobic digestion and
 scientific Python. It was designed by **Nikan Haghighatjue**, building on his MSc
 research on biochar characterization for anaerobic digestion.
@@ -26,6 +36,8 @@ represents biochar dose and temperature explicitly:
 - Q10 temperature correction for production rate;
 - robust global least-squares estimation;
 - residual-bootstrap uncertainty that preserves batch structure;
+- comparison with a parsimonious constant-Gompertz baseline using AIC, AICc and BIC;
+- leave-one-batch-out validation to separate curve fitting from prediction;
 - reproducible CSV, JSON and publication-ready PNG outputs.
 
 ## Model
@@ -55,6 +67,8 @@ The command creates:
 - `synthetic_bmp_data.csv` — explicitly labelled demonstration data;
 - `fit_summary.json` — fitted parameters and diagnostic metrics;
 - `bootstrap_summary.csv` — uncertainty summary;
+- `model_comparison.csv` — baseline comparison and ΔAICc;
+- `leave_one_batch_out.csv` — prediction error for every held-out batch;
 - `fitted_curves.png` — observed and fitted profiles.
 
 To fit an experimental dataset:
@@ -78,9 +92,18 @@ GitHub Actions runs both checks on Python 3.10 and 3.12.
 ## Responsible use and next validation step
 
 Synthetic data tests software behaviour, not scientific validity. A meaningful
-next step is to fit independent experimental BMP data, inspect residuals, test
-parameter identifiability, and compare the model against simpler Gompertz and
-first-order baselines using information criteria or held-out prediction.
+next step is to preregister the comparison criteria, fit an independent
+experimental BMP dataset, inspect residual structure, and test practical
+parameter identifiability. A good synthetic-data score is not evidence that
+biochar improves anaerobic digestion.
+
+## Interpretation rules
+
+- `delta_aicc = 0` identifies the best-supported candidate within this limited set.
+- Held-out error is the primary predictive check; training R² is descriptive only.
+- Model selection cannot establish a causal biochar mechanism.
+- Independent data and additional mechanistic baselines remain required before
+  publication-level claims are appropriate.
 
 ## License
 
