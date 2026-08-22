@@ -21,9 +21,11 @@ This project connects chemical-engineering kinetics, anaerobic digestion and
 scientific Python. It was designed by **Nikan Haghighatjue**, building on his MSc
 research on biochar characterization for anaerobic digestion.
 
-> **Scientific status:** the included dose-response layer is an exploratory,
-> testable modelling hypothesis. The demo dataset is synthetic and clearly
-> labelled. The repository does not claim experimental validation.
+> **Scientific status:** the included dose-response layer remains an exploratory,
+> testable modelling hypothesis. A separate, openly licensed experimental dataset
+> is now included for kinetic-baseline benchmarking, but it has one temperature and
+> one carbon-material dose. It therefore does **not** validate the global
+> dose-temperature hypothesis.
 
 ## Why this is useful
 
@@ -71,6 +73,29 @@ The command creates:
 - `leave_one_batch_out.csv` — prediction error for every held-out batch;
 - `fitted_curves.png` — observed and fitted profiles.
 
+## Real experimental benchmark
+
+`data/experimental/kozlowski_2025_bmp.csv` contains reactor-level measurements
+mechanically derived from the CC BY 4.0 publisher supplement to Kozłowski et al.
+(2025), [Scientific Reports 15, 18728](https://doi.org/10.1038/s41598-025-02564-0).
+It covers 12 food-waste reactor trajectories over 21 days at 37 °C: no carbon
+material, torrefaction product, pyrolysis biochar, and hydrochar. Raw volumes,
+blank correction, provenance, inclusion flags, and two source-data quality issues
+are documented in `data/README.md`.
+
+Run the experimental comparison with:
+
+```bash
+biochar-ad benchmark-experimental --output outputs/experimental
+```
+
+The benchmark compares first-order, modified Gompertz, and logistic cumulative
+methane models separately within each treatment. The primary selection criterion
+is leave-one-reactor-out RMSE. AIC/AICc/BIC are reported only as descriptive
+secondary measures because points within a cumulative trajectory are
+autocorrelated. The reproducible reference output and cautious interpretation are
+stored in `results/experimental/`.
+
 To fit an experimental dataset:
 
 ```bash
@@ -91,11 +116,12 @@ GitHub Actions runs both checks on Python 3.10 and 3.12.
 
 ## Responsible use and next validation step
 
-Synthetic data tests software behaviour, not scientific validity. A meaningful
-next step is to preregister the comparison criteria, fit an independent
-experimental BMP dataset, inspect residual structure, and test practical
-parameter identifiability. A good synthetic-data score is not evidence that
-biochar improves anaerobic digestion.
+Synthetic data tests software behaviour, not scientific validity. The real-data
+benchmark tests kinetic curve families and reproducible data handling, not the
+causal effect of biochar or the proposed dose-temperature response. A meaningful
+next step is an independent multi-dose, multi-temperature dataset with reactor
+replicates, preregistered comparison criteria, residual diagnostics, and practical
+parameter-identifiability analysis.
 
 ## Interpretation rules
 
