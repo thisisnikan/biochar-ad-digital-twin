@@ -40,3 +40,23 @@ python scripts/build_kozlowski_2025_dataset.py
 ```
 
 The script verifies the source hash before parsing it.
+
+## Valentin & Białowiec (2024)
+
+`experimental/valentin_bialowiec_2024_parameters.csv` transcribes the five dose
+conditions and published modified-Gompertz estimates from Table 3 of:
+
+> Valentin, M. T. & Białowiec, A. *Impact of using glucose as a sole carbon
+> source to analyze the effect of biochar on the kinetics of biomethane
+> production*. Scientific Reports 14, 8656 (2024).
+> https://doi.org/10.1038/s41598-024-59313-y
+
+- Article license: CC BY 4.0.
+- Experiment: triplicate 37 °C reactors with glucose, wheat-straw biochar
+  produced at 900 °C, and doses of 0, 2, 4, 6, and 8 g/L.
+- Scope: exact table-level cumulative BMP, fit statistics, potential, maximum
+  rate, rate constant, and lag; these are published estimates, not raw reactor
+  trajectories.
+- The article reports 86,400 raw cases but states that those data are available
+  from the corresponding author on reasonable request. They are not reconstructed
+  or represented here as open raw data.

@@ -10,6 +10,7 @@ import pandas as pd
 from .analysis import compare_models, leave_one_batch_out
 from .baselines import compare_experimental_baselines
 from .data import generate_demo_dataset
+from .external_validation import compare_external_dose_responses
 from .fit import bootstrap_parameters, fit_global
 from .report import save_report
 
@@ -34,11 +35,39 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("data/experimental/kozlowski_2025_bmp.csv"),
     )
     benchmark.add_argument("--output", type=Path, default=Path("outputs/experimental"))
+    external = commands.add_parser(
+        "benchmark-external-dose",
+        help="Challenge dose-response forms with independent published kinetic parameters",
+    )
+    external.add_argument(
+        "csv",
+        type=Path,
+        nargs="?",
+        default=Path("data/experimental/valentin_bialowiec_2024_parameters.csv"),
+    )
+    external.add_argument("--output", type=Path, default=Path("outputs/external-dose"))
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
+    if args.command == "benchmark-external-dose":
+        frame = pd.read_csv(args.csv)
+        comparison = compare_external_dose_responses(frame)
+        args.output.mkdir(parents=True, exist_ok=True)
+        comparison.to_csv(args.output / "dose_response_comparison.csv", index=False)
+        best = comparison.loc[comparison["rank_by_held_out_rmse"] == 1]
+        print(
+            json.dumps(
+                {
+                    "dataset": str(args.csv),
+                    "selection_metric": "leave-one-dose-out RMSE",
+                    "best_model_by_response": dict(zip(best["response"], best["model"])),
+                },
+                indent=2,
+            )
+        )
+        return
     if args.command == "benchmark-experimental":
         frame = pd.read_csv(args.csv)
         comparison = compare_experimental_baselines(frame)
