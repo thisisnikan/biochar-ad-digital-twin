@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Separating material effects from inoculum effects in AD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDEFE9;
+  --paper2:#E4E8DF;
+  --deep:#10211C;
+  --ink:#121A17;
+  --muted:#5D6B62;
+  --line:#C7D0C5;
+  --flame:#1B3FC4;
+  --ochre:#B06A22;
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--body);
+  overflow:hidden;-webkit-font-smoothing:antialiased;
+}
+
+/* ---------- deck shell ---------- */
+.deck{position:relative;height:100vh;height:100dvh;width:100%}
+.slide{
+  position:absolute;inset:0;display:none;
+  padding:clamp(22px,4.4vw,72px) clamp(22px,5vw,88px) clamp(64px,7vh,90px) clamp(34px,6vw,104px);
+  flex-direction:column;justify-content:center;
+}
+.slide.is-active{display:flex}
+.slide.dark{background:var(--deep);color:#E8EDE6}
+.slide.dark .eyebrow{color:#7FA394}
+.slide.dark .sub{color:#A8BCB1}
+
+/* left rail: cumulative gas volume motif */
+.rail{position:fixed;left:clamp(12px,1.7vw,26px);top:14vh;bottom:14vh;width:3px;background:var(--line);z-index:30}
+.rail span{position:absolute;left:0;top:0;width:3px;background:var(--flame);height:0;transition:height .55s cubic-bezier(.4,0,.2,1)}
+.slide.dark ~ .rail{background:#2A4239}
+
+/* nav */
+.nav{position:fixed;right:clamp(16px,2.4vw,34px);bottom:clamp(14px,2.4vh,26px);display:flex;align-items:center;gap:12px;z-index:40}
+.nav button{
+  border:1px solid var(--line);background:rgba(255,255,255,.55);color:var(--ink);
+  width:38px;height:34px;border-radius:2px;font-size:15px;cursor:pointer;font-family:var(--mono);
+  transition:background .18s ease,border-color .18s ease,transform .18s ease;
+}
+.nav button:hover{background:var(--flame);border-color:var(--flame);color:#fff;transform:translateY(-1px)}
+.nav button:focus-visible{outline:2px solid var(--flame);outline-offset:2px}
+.count{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+body.on-dark .nav button{background:rgba(255,255,255,.06);border-color:#2F473D;color:#DCE6DE}
+body.on-dark .count{color:#8FA79A}
+
+/* ---------- type ---------- */
+.eyebrow{
+  font-family:var(--mono);font-size:clamp(10px,1.05vw,12px);letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:clamp(14px,2.2vh,22px);
+}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,5.1vw,66px);line-height:1.02;letter-spacing:-.022em;max-width:19ch}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(23px,3.5vw,44px);line-height:1.08;letter-spacing:-.018em;max-width:22ch;margin-bottom:clamp(16px,2.6vh,30px)}
+.sub{font-size:clamp(14px,1.55vw,20px);color:var(--muted);max-width:52ch;line-height:1.55;margin-top:clamp(14px,2.4vh,24px)}
+p.lead{font-size:clamp(15px,1.6vw,21px);line-height:1.6;max-width:56ch}
+strong{font-weight:600;color:var(--flame)}
+.slide.dark strong{color:#8FB6FF}
+
+/* ---------- reveal animation ---------- */
+[data-r]{opacity:0;transform:translateY(16px);filter:blur(5px)}
+.is-active.play [data-r]{
+  animation:rise .62s cubic-bezier(.2,.7,.3,1) forwards;
+  animation-delay:calc(var(--d,0) * 105ms + 60ms);
+}
+@keyframes rise{to{opacity:1;transform:none;filter:blur(0)}}
+
+/* ---------- title slide ---------- */
+.title-meta{display:flex;flex-wrap:wrap;gap:clamp(18px,3vw,46px);margin-top:clamp(26px,4.4vh,46px);font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:#A8BCB1}
+.title-meta b{display:block;color:#E8EDE6;font-weight:500;margin-top:5px;letter-spacing:0;font-family:var(--body);font-size:14px}
+.ghost-curve{position:absolute;right:-4%;bottom:0;width:min(62%,760px);opacity:.16;pointer-events:none}
+.ghost-curve path{fill:none;stroke:#7FE0B4;stroke-width:2}
+
+/* ---------- chart ---------- */
+.chart-wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(20px,3.4vw,54px);align-items:center}
+svg.chart{width:100%;height:auto;max-height:47vh}
+.ax{stroke:var(--line);stroke-width:1.4}
+.grid{stroke:var(--line);stroke-width:1;stroke-dasharray:2 6;opacity:.75}
+.curve{fill:none;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:1400;stroke-dashoffset:1400}
+.is-active.play .curve{animation:draw 1.5s cubic-bezier(.35,.1,.25,1) forwards}
+.is-active.play .curve.b{animation-delay:.42s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.c-a{stroke:var(--flame)}
+.c-b{stroke:var(--ochre)}
+.dot{opacity:0}
+.is-active.play .dot{animation:pop .5s ease forwards;animation-delay:1.7s}
+@keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+.brace{opacity:0}
+.is-active.play .brace{animation:fadeIn .6s ease forwards;animation-delay:2s}
+@keyframes fadeIn{to{opacity:1}}
+text.lbl{font-family:var(--mono);font-size:11px;fill:var(--muted);letter-spacing:.04em}
+text.lblc{font-family:var(--mono);font-size:12px;letter-spacing:.03em}
+
+/* ---------- pipeline ---------- */
+.pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.5vw,20px);margin-top:clamp(10px,2vh,20px)}
+.node{border-top:2px solid var(--flame);padding-top:14px;position:relative}
+.node .n{font-family:var(--mono);font-size:11px;color:var(--flame);letter-spacing:.14em;margin-bottom:8px}
+.node h3{font-family:var(--display);font-weight:600;font-size:clamp(15px,1.55vw,20px);line-height:1.2;margin-bottom:9px}
+.node p{font-size:clamp(12px,1.06vw,14.5px);line-height:1.5;color:var(--muted)}
+.node::after{content:"";position:absolute;top:-5px;left:0;width:8px;height:8px;border-radius:50%;background:var(--flame);opacity:0}
+.is-active.play .node::after{animation:travel 3.4s ease-in-out infinite;animation-delay:calc(var(--d) * 180ms + 700ms)}
+@keyframes travel{0%{opacity:0;left:0}12%{opacity:1}88%{opacity:1}100%{opacity:0;left:calc(100% - 8px)}}
+
+/* ---------- data table ---------- */
+.tier{margin-bottom:clamp(14px,2.4vh,26px)}
+.tier-h{display:flex;align-items:baseline;gap:12px;margin-bottom:9px}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:3px 9px;border-radius:2px}
+.t1{background:var(--flame);color:#fff}
+.t2{background:var(--ochre);color:#fff}
+.t3{background:var(--paper2);color:var(--muted);border:1px solid var(--line)}
+.tier-h span{font-size:13px;color:var(--muted)}
+.vars{display:flex;flex-wrap:wrap;gap:7px}
+.var{
+  font-family:var(--mono);font-size:clamp(11px,1.05vw,13px);
+  border:1px solid var(--line);background:rgba(255,255,255,.5);
+  padding:6px 11px;border-radius:2px;transition:border-color .2s ease,background .2s ease;
+}
+.var:hover{border-color:var(--flame);background:#fff}
+
+/* ---------- misc blocks ---------- */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(18px,3vw,52px);align-items:start}
+ul.clean{list-style:none;display:flex;flex-direction:column;gap:clamp(9px,1.5vh,15px)}
+ul.clean li{padding-left:24px;position:relative;font-size:clamp(13.5px,1.35vw,17px);line-height:1.5;max-width:46ch}
+ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;height:1.6px;background:var(--flame)}
+.slide.dark ul.clean li::before{background:#7FE0B4}
+.numlist{counter-reset:q;display:flex;flex-direction:column;gap:clamp(14px,2.3vh,26px)}
+.numlist li{list-style:none;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start}
+.numlist li::before{
+  counter-increment:q;content:counter(q,decimal-leading-zero);
+  font-family:var(--mono);font-size:12px;color:var(--flame);padding-top:5px;letter-spacing:.05em;
+}
+.numlist p{font-size:clamp(14px,1.45vw,18px);line-height:1.5;max-width:50ch}
+.numlist small{display:block;color:var(--muted);font-size:clamp(12px,1.1vw,14px);margin-top:5px;line-height:1.5}
+.note{
+  margin-top:clamp(16px,2.6vh,28px);border-left:2px solid var(--ochre);padding:10px 0 10px 16px;
+  font-size:clamp(12.5px,1.15vw,15px);color:var(--muted);max-width:56ch;line-height:1.55;
+}
+.fill{background:rgba(176,106,34,.14);border-bottom:1px dashed var(--ochre);padding:1px 5px;font-family:var(--mono);font-size:.9em}
+.kpi{display:flex;gap:clamp(20px,3.4vw,56px);margin-top:clamp(16px,2.8vh,30px);flex-wrap:wrap}
+.kpi div span{font-family:var(--display);font-weight:800;font-size:clamp(26px,3.6vw,46px);display:block;line-height:1;letter-spacing:-.02em}
+.kpi div small{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-top:8px}
+.hint{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);z-index:40;transition:opacity .5s ease}
+.hint.gone{opacity:0}
+
+@media (max-width:820px){
+  .chart-wrap,.two{grid-template-columns:1fr;gap:18px}
+  .pipe{grid-template-columns:1fr 1fr}
+  .slide{padding:26px 20px 74px 34px;justify-content:flex-start;padding-top:12vh;overflow-y:auto}
+  svg.chart{max-height:34vh}
+}
+@media (prefers-reduced-motion:reduce){
+  [data-r],.curve,.dot,.brace{opacity:1!important;transform:none!important;filter:none!important;stroke-dashoffset:0!important;animation:none!important}
+  .node::after{animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- 1 ................................................. -->
+<section class="slide dark is-active">
+  <svg class="ghost-curve" viewBox="0 0 700 300" aria-hidden="true">
+    <path d="M0,290 C120,288 180,180 260,130 C340,82 470,66 700,58"/>
+    <path d="M0,292 C160,290 220,240 300,200 C400,152 520,128 700,118"/>
+  </svg>
+  <div class="eyebrow" data-r style="--d:0">Project discussion &middot; University of Hohenheim</div>
+  <h1 data-r style="--d:1">Separating material effects from inoculum effects in anaerobic digestion</h1>
+  <p class="sub" data-r style="--d:2">A cross-study modelling project, and the experimental data it needs to be validated.</p>
+  <div class="title-meta" data-r style="--d:3">
+    <div>Presented by<b>Nikan Haghighatjue</b></div>
+    <div>For<b>Dr. Benedikt H&uuml;lsemann</b></div>
+    <div>Date<b class="fill">[insert date]</b></div>
+  </div>
+</section>
+
+<!-- 2 ................................................. -->
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Background</div>
+  <h2 data-r style="--d:1">Two minutes on where I come from</h2>
+  <div class="two">
+    <ul class="clean">
+      <li data-r style="--d:2">MSc Chemical Engineering, Sapienza University of Rome, 2025.</li>
+      <li data-r style="--d:3">MSc thesis: physicochemical characterization of biochars for anaerobic digestion, using TGA, BET, SEM and XRD.</li>
+      <li data-r style="--d:4">Pilot-scale continuous-flow hydroprocessing at RIPI, Tehran, on a 50 L unit.</li>
+    </ul>
+    <ul class="clean">
+      <li data-r style="--d:5">Modelling side: Python, MATLAB, Fortran, numerical methods for reactor dynamics, regression and tree-based models.</li>
+      <li data-r style="--d:6">I am building this project independently, as the basis for a doctoral proposal.</li>
+      <li data-r style="--d:7">Based in Rome, authorised to work in the EU.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3 ................................................. -->
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">The problem</div>
+  <div class="chart-wrap">
+    <svg class="chart" viewBox="0 0 560 320" role="img" aria-label="Two cumulative methane curves with the same additive but different inocula">
+      <line class="ax" x1="60" y1="20" x2="60" y2="272"/>
+      <line class="ax" x1="60" y1="272" x2="530" y2="272"/>
+      <line class="grid" x1="60" y1="70" x2="530" y2="70"/>
+      <line class="grid" x1="60" y1="140" x2="530" y2="140"/>
+      <line class="grid" x1="60" y1="206" x2="530" y2="206"/>
+      <text class="lbl" x="60" y="296" text-anchor="middle">0</text>
+      <text class="lbl" x="295" y="296" text-anchor="middle">time (d)</text>
+      <text class="lbl" x="14" y="150" transform="rotate(-90 14 150)" text-anchor="middle">cumulative CH&#8324;</text>
+
+      <path class="curve c-a a" d="M60,268 C130,264 160,150 220,115 C285,80 380,72 500,66"/>
+      <path class="curve c-b b" d="M60,268 C150,267 190,225 250,188 C325,142 400,120 500,110"/>
+
+      <g class="dot">
+        <circle cx="500" cy="66" r="5.5" fill="#1B3FC4"/>
+        <circle cx="500" cy="110" r="5.5" fill="#B06A22"/>
+      </g>
+      <g class="brace">
+        <line x1="520" y1="66" x2="520" y2="110" stroke="#B06A22" stroke-width="1.5"/>
+        <line x1="514" y1="66" x2="526" y2="66" stroke="#B06A22" stroke-width="1.5"/>
+        <line x1="514" y1="110" x2="526" y2="110" stroke="#B06A22" stroke-width="1.5"/>
+        <text class="lblc" x="534" y="92" fill="#B06A22">&#916;</text>
+      </g>
+      <text class="lblc" x="300" y="96" fill="#1B3FC4">inoculum A</text>
+      <text class="lblc" x="330" y="176" fill="#B06A22">inoculum B</text>
+    </svg>
+    <div>
+      <h2 data-r style="--d:1">The same additive, two different answers</h2>
+      <p class="lead" data-r style="--d:2">Reported methane improvements from biochar and carbon materials range from a few percent to almost double. The published number carries the additive, the inoculum, the substrate, the S/I ratio, the reactor and the temperature, all at once.</p>
+      <div class="note" data-r style="--d:3">Most papers report only the cumulative endpoint. One number per treatment cannot tell you whether the additive made digestion <strong>faster</strong> or made it produce <strong>more</strong>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 ................................................. -->
+<section class="slide dark">
+  <div class="eyebrow" data-r style="--d:0">The question</div>
+  <h1 data-r style="--d:1;font-size:clamp(26px,3.9vw,50px);max-width:24ch">Can a model trained across heterogeneous studies attribute a methane improvement to the material itself, once inoculum and operating conditions are accounted for?</h1>
+  <p class="sub" data-r style="--d:2">If the answer is yes, the same framework predicts which material and dose is worth testing before anyone runs a batch. If the answer is no, that result is worth publishing too, because it tells the field what its datasets can and cannot support.</p>
+</section>
+
+<!-- 5 ................................................. -->
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Modelling framework</div>
+  <h2 data-r style="--d:1">Four stages, kinetics before regression</h2>
+  <div class="pipe">
+    <div class="node" data-r style="--d:2">
+      <div class="n">STAGE 01</div>
+      <h3>Curated dataset</h3>
+      <p>Time-resolved methane curves from published and shared experiments, stored with their substrate, inoculum and reactor metadata intact.</p>
+    </div>
+    <div class="node" data-r style="--d:3">
+      <div class="n">STAGE 02</div>
+      <h3>Kinetic fitting</h3>
+      <p>Modified Gompertz and first-order fits per experiment, giving lag phase &#955;, maximum rate R&#8344; and ultimate yield P for every replicate.</p>
+    </div>
+    <div class="node" data-r style="--d:4">
+      <div class="n">STAGE 03</div>
+      <h3>Cross-study regression</h3>
+      <p>Random forest and gradient boosting on the kinetic parameters, with material descriptors, inoculum descriptors and operating conditions as separate feature blocks.</p>
+    </div>
+    <div class="node" data-r style="--d:5">
+      <div class="n">STAGE 04</div>
+      <h3>Attribution and validation</h3>
+      <p>SHAP values to see which block carries the effect, then held-out validation on studies never used in training.</p>
+    </div>
+  </div>
+  <div class="note" data-r style="--d:6">The target variables are kinetic parameters, not raw yields. That is the reason time series matter more to this project than endpoint tables.</div>
+</section>
+
+<!-- 6 ................................................. -->
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Why time-resolved data</div>
+  <h2 data-r style="--d:1">One endpoint gives one number. A curve gives three.</h2>
+  <div class="kpi">
+    <div data-r style="--d:2"><span>&#955;</span><small>lag phase</small></div>
+    <div data-r style="--d:3"><span>R&#8344;</span><small>maximum rate</small></div>
+    <div data-r style="--d:4"><span>P</span><small>ultimate yield</small></div>
+  </div>
+  <ul class="clean" style="margin-top:clamp(20px,3.4vh,36px)">
+    <li data-r style="--d:5">Conductive additives are expected to act mainly on <strong>&#955; and R&#8344;</strong>, through interspecies electron transfer, not necessarily on P.</li>
+    <li data-r style="--d:6">Endpoint-only data collapses all three into one value, so the mechanism becomes invisible and the model can only learn correlations.</li>
+    <li data-r style="--d:7">Replicate-level curves also give an honest error estimate, which decides whether a reported improvement is real or within scatter.</li>
+  </ul>
+</section>
+
+<!-- 7 ................................................. -->
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Your work in focus</div>
+  <h2 data-r style="--d:1">Where Hohenheim fits</h2>
+  <ul class="clean">
+    <li data-r style="--d:2"><strong>Hohenheim Biogas Yield Test and BMP methodology.</strong> Standardised inoculum handling and test protocol, which is exactly the metadata most published datasets are missing.</li>
+    <li data-r style="--d:3"><strong>Inoculum effects on measured biogas potential.</strong> Directly relevant to the confounding problem on the previous slides.</li>
+    <li data-r style="--d:4"><strong>Hydrochar, HTC process water and digestate in anaerobic digestion.</strong> The material side of the same question.</li>
+    <li data-r style="--d:5">Specific papers I would like to discuss: <span class="fill">[paper 1]</span> <span class="fill">[paper 2]</span> <span class="fill">[paper 3]</span></li>
+  </ul>
+  <div class="note" data-r style="--d:6">Question for you: which of your studies do you consider the most reliable source of raw kinetic data, and which ones would you steer me away from?</div>
+</section>
+
+<!-- 8 ................................................. -->
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Data request</div>
+  <h2 data-r style="--d:1">What I would ask for, in priority order</h2>
+
+  <div class="tier" data-r style="--d:2">
+    <div class="tier-h"><span class="tag t1">Essential</span><span>without these the model cannot be fitted</span></div>
+    <div class="vars">
+      <span class="var">CH&#8324; or biogas volume vs time</span>
+      <span class="var">per replicate, not averaged</span>
+      <span class="var">substrate ID + TS/VS</span>
+      <span class="var">inoculum source + VS</span>
+      <span class="var">S/I ratio</span>
+      <span class="var">temperature</span>
+      <span class="var">reactor volume + mode</span>
+    </div>
+  </div>
+
+  <div class="tier" data-r style="--d:3">
+    <div class="tier-h"><span class="tag t2">Valuable</span><span>these separate mechanism from correlation</span></div>
+    <div class="vars">
+      <span class="var">pH over time</span>
+      <span class="var">VFA profile</span>
+      <span class="var">alkalinity / FOS-TAC</span>
+      <span class="var">gas composition</span>
+      <span class="var">additive type + dose</span>
+      <span class="var">additive characterization</span>
+    </div>
+  </div>
+
+  <div class="tier" data-r style="--d:4">
+    <div class="tier-h"><span class="tag t3">If available</span><span>useful, not a condition</span></div>
+    <div class="vars">
+      <span class="var">blank / inoculum-only controls</span>
+      <span class="var">standard deviations</span>
+      <span class="var">inoculum activity test</span>
+      <span class="var">pretreatment history</span>
+    </div>
+  </div>
+
+  <div class="note" data-r style="--d:5">Original units, treatment names and processing history are preserved exactly as you provide them. I do not reinterpret or renormalise anything without asking first.</div>
+</section>
+
+<!-- 9 ................................................. -->
+<section class="slide dark">
+  <div class="eyebrow" data-r style="--d:0">Your time</div>
+  <h2 data-r style="--d:1">You mentioned this could take hours. It should not.</h2>
+  <ol class="numlist">
+    <li data-r style="--d:2"><div><p>You export the raw files in whatever form they already exist.</p><small>Excel sheets, instrument exports, lab logs, scanned protocols. No cleaning, no reformatting, no renaming.</small></div></li>
+    <li data-r style="--d:3"><div><p>I do the structuring, unit harmonisation and kinetic fitting.</p><small>This is the part of the work I am set up to do, and it is the part I want to be responsible for.</small></div></li>
+    <li data-r style="--d:4"><div><p>You get the cleaned, documented dataset back.</p><small>Machine-readable, with a data dictionary and the fitted kinetic parameters, usable for your own group regardless of what happens to my model.</small></div></li>
+  </ol>
+</section>
+
+<!-- 10 ................................................ -->
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Terms</div>
+  <h2 data-r style="--d:1">How the data would be handled</h2>
+  <div class="two">
+    <ul class="clean">
+      <li data-r style="--d:2">Used only for model development and validation in this project.</li>
+      <li data-r style="--d:3">No redistribution of any non-public dataset without your written permission.</li>
+      <li data-r style="--d:4">Every study cited clearly, in any output.</li>
+    </ul>
+    <ul class="clean">
+      <li data-r style="--d:5">A written summary of results and validation performance sent to you, whether or not the outcome is positive.</li>
+      <li data-r style="--d:6">Co-authorship or acknowledgement, whichever you consider appropriate for the contribution.</li>
+      <li data-r style="--d:7">If you prefer a formal data sharing agreement, I will follow whatever your institute requires.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 11 ................................................ -->
+<section class="slide dark">
+  <div class="eyebrow" data-r style="--d:0">Next steps</div>
+  <h2 data-r style="--d:1">Three things I would like to agree today</h2>
+  <ol class="numlist">
+    <li data-r style="--d:2"><div><p>Which of your studies are the best fit for this dataset.</p></div></li>
+    <li data-r style="--d:3"><div><p>Whether the time-resolved data behind them can be shared, and in what form.</p></div></li>
+    <li data-r style="--d:4"><div><p>Whether a longer collaboration, a research visit or a doctoral project in your group would be of interest.</p></div></li>
+  </ol>
+  <p class="sub" data-r style="--d:5">Thank you for the time. Questions are welcome at any point.<br>
+  <span style="font-family:var(--mono);font-size:13px">nikan.haghighatjoo@gmail.com</span></p>
+</section>
+
+</div>
+
+<div class="rail"><span id="railfill"></span></div>
+<div class="nav">
+  <span class="count" id="count">01 / 11</span>
+  <button id="prev" aria-label="Previous slide">&#8592;</button>
+  <button id="next" aria-label="Next slide">&#8594;</button>
+</div>
+<div class="hint" id="hint">Use &#8592; &#8594; or click &middot; F for fullscreen</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i = 0;
+  var rail = document.getElementById('railfill');
+  var count = document.getElementById('count');
+  var hint = document.getElementById('hint');
+
+  function pad(n){ return (n<10?'0':'') + n; }
+
+  function show(n){
+    n = Math.max(0, Math.min(slides.length-1, n));
+    slides.forEach(function(s){ s.classList.remove('is-active','play'); });
+    var s = slides[n];
+    s.classList.add('is-active');
+    void s.offsetWidth;              // restart the reveal animations
+    s.classList.add('play');
+    i = n;
+    rail.style.height = ((n)/(slides.length-1)*100) + '%';
+    count.textContent = pad(n+1) + ' / ' + pad(slides.length);
+    document.body.classList.toggle('on-dark', s.classList.contains('dark'));
+    document.body.style.background = s.classList.contains('dark') ? '#10211C' : '#EDEFE9';
+    if(n > 0) hint.classList.add('gone');
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); show(i+1); }
+    if(e.key === 'ArrowLeft'  || e.key === 'PageUp'){ e.preventDefault(); show(i-1); }
+    if(e.key === 'Home'){ show(0); }
+    if(e.key === 'End'){ show(slides.length-1); }
+    if(e.key === 'f' || e.key === 'F'){
+      if(!document.fullscreenElement){ document.documentElement.requestFullscreen(); }
+      else { document.exitFullscreen(); }
+    }
+  });
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); show(i+1); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); show(i-1); });
+
+  document.getElementById('deck').addEventListener('click', function(e){
+    show(e.clientX > window.innerWidth * 0.35 ? i+1 : i-1);
+  });
+
+  var x0 = null;
+  document.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if(x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if(Math.abs(dx) > 45){ show(dx < 0 ? i+1 : i-1); }
+    x0 = null;
+  }, {passive:true});
+
+  show(0);
+})();
+</script>
+</body>
+</html>
