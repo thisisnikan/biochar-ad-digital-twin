@@ -105,6 +105,10 @@ biochar-ad fit path/to/bmp_data.csv --output outputs
 Required columns are `batch_id`, `time_days`, `dose_g_l`, `temperature_c`, and
 `methane_ml_g_vs`.
 
+## Research presentation
+
+The animated [Hohenheim AD modelling presentation](presentation/index.html) connects the current Biochar–AD Digital Twin with a proposed cross-study framework for separating material effects from inoculum and operating-condition effects. See the [presentation guide](presentation/README.md) for controls and editing instructions.
+
 ## Quality controls
 
 ```bash
