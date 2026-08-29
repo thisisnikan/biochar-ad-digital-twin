@@ -187,7 +187,7 @@ def process_metrics(process: pd.DataFrame) -> pd.DataFrame:
         for column in wide.columns
     ]
     result = wide.merge(ph_metrics, on=["experiment_axis", "treatment"], how="left")
-    for axis, indices in result.groupby("experiment_axis").groups.items():
+    for indices in result.groupby("experiment_axis").groups.values():
         control = result.loc[indices].query("treatment == 'control'").iloc[0]
         for day in (6, 12, 18):
             column = f"total_vfa_day{day}_mg_l"
