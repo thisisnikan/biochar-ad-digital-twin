@@ -40,3 +40,37 @@ python scripts/build_kozlowski_2025_dataset.py
 ```
 
 The script verifies the source hash before parsing it.
+
+## Zhang et al. (2022)
+
+`experimental/zhang_2022_biochar_characteristics.csv` contains the five
+pyrolysis-temperature biochar descriptors reported in Table 1 and the Raman
+`I_D/I_G` values reported in the article text:
+
+> Zhang, C., Yang, R., Sun, M. et al. Wood waste biochar promoted anaerobic
+> digestion of food waste: focusing on the characteristics of biochar and
+> microbial community analysis. Biochar 4, 62 (2022).
+> https://doi.org/10.1007/s42773-022-00187-6
+
+- Article license: CC BY 4.0.
+- Experiment: triplicate 37 °C food-waste batch digestion with 10 g/L wood-waste
+  biochar prepared at several pyrolysis temperatures and residence times.
+- The public table records surface O/C ratio, XPS-derived oxygen-containing bond
+  percentages, and Raman `I_D/I_G`; it does not infer missing properties.
+
+On 2026-08-26, Chao Zhang also shared a workbook containing post-processed
+treatment means and standard deviations for cumulative methane, pH, and six VFAs.
+The methane series are already inoculum-blank corrected. The original triplicate
+files are no longer available, so the shared workbook cannot support
+replicate-held-out validation or empirical replicate resampling.
+
+The workbook is not redistributed while public-repository permission is pending.
+`scripts/build_zhang_2022_dataset.py` verifies the private source hash and builds
+ignored long-form methane and process-monitoring tables:
+
+```bash
+python scripts/build_zhang_2022_dataset.py --source /path/to/Data.xlsx
+```
+
+No pseudo-replicates are generated. Any model fitted to these summary curves must
+identify its uncertainty and validation limits explicitly.

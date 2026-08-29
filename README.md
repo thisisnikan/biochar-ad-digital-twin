@@ -96,6 +96,21 @@ secondary measures because points within a cumulative trajectory are
 autocorrelated. The reproducible reference output and cautious interpretation are
 stored in `results/experimental/`.
 
+## Author-shared summary-data integration
+
+An author-shared Zhang et al. (2022) workbook adds a complementary experiment:
+wood-waste biochars produced at 550–950 °C and at 30–120 min residence times,
+tested at 10 g/L in 37 °C food-waste batch digestion. It contains consolidated
+cumulative methane, pH, and individual VFA means with reported standard
+deviations.
+
+The original reactor-level triplicates were lost, and the shared methane curves
+are already inoculum-blank corrected. The repository therefore provides a
+hash-verified private ingestion script without publishing the workbook or
+pretending that summary statistics are independent reactor trajectories. Public
+biochar descriptors from the CC BY 4.0 article are included with exact
+provenance. See `data/README.md` for the access boundary and rebuild command.
+
 To fit an experimental dataset:
 
 ```bash
