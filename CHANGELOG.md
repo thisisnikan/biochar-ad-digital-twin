@@ -6,7 +6,10 @@ release model while the public API remains experimental.
 ## Unreleased
 
 - Improved repository navigation, contribution guidance and scientific-status reporting.
-- Reframed the presentation around current evidence, validation gates and a concrete data ask.
+- Added `docs/ARCHITECTURE.md`, a plain-language map and glossary for readers new to
+  biomethane potential (BMP) modelling.
+- Consolidated the two presentation decks into a single general-audience overview deck
+  (`presentation/index.html`) and removed the meeting-specific Hohenheim deck.
 - Added the open Kozłowski et al. (2025) reactor-level kinetic benchmark.
 - Added private, hash-verified Zhang et al. (2022) ingestion and summary-analysis workflows.
 

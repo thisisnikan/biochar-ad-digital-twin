@@ -10,9 +10,12 @@ experiments with biochar amendment. It fits all dose–temperature conditions
 simultaneously, quantifies goodness of fit, and estimates parameter uncertainty
 with a batch-aware residual bootstrap.
 
-**Start here:** [Scientific status](docs/PROJECT_STATUS.md) ·
+**New to this project? Start with the map:** [Architecture and glossary](docs/ARCHITECTURE.md)
+explains the idea, the repository layout and the code path in plain language.
+
+**Then:** [Scientific status](docs/PROJECT_STATUS.md) ·
 [Data provenance](data/README.md) · [Reproducible results](results/README.md) ·
-[Research presentation](presentation/README.md) · [Contributing](CONTRIBUTING.md)
+[Presentation](presentation/README.md) · [Contributing](CONTRIBUTING.md)
 
 ## Current evidence at a glance
 
@@ -138,9 +141,12 @@ biochar-ad fit path/to/bmp_data.csv --output outputs
 Required columns are `batch_id`, `time_days`, `dose_g_l`, `temperature_c`, and
 `methane_ml_g_vs`.
 
-## Presentations
+## Presentation
 
-Two animated, single-file HTML decks live in `presentation/`: a general [project overview](presentation/overview.html) covering the whole idea end to end, and the [Hohenheim research discussion deck](presentation/index.html), which connects the current Biochar–AD Digital Twin with a proposed cross-study framework for separating material effects from inoculum and operating-condition effects. See the [presentation guide](presentation/README.md) for controls and editing instructions.
+An animated, single-file HTML deck at [`presentation/index.html`](presentation/index.html)
+walks through the whole idea end to end: the problem, the research question, the modelling
+pipeline, the evidence assembled, an honest status readout, and the roadmap. See the
+[presentation guide](presentation/README.md) for controls and editing instructions.
 
 ## Quality controls
 
@@ -159,9 +165,12 @@ tests/                 unit and end-to-end workflow tests
 data/experimental/     redistributable, provenance-documented inputs
 scripts/               deterministic ingestion and analysis entry points
 results/               reproducible reference outputs and interpretation
-presentation/          animated research-discussion deck
-docs/                  project status, scope and validation roadmap
+presentation/          animated project-overview deck
+docs/                  architecture map, project status, scope and validation roadmap
 ```
+
+For a longer, beginner-friendly walkthrough of what each part does and how a run flows
+between them, see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 Private author-shared inputs and their derived private outputs are intentionally excluded
 through `.gitignore`; see [`data/README.md`](data/README.md) for the access boundary.
