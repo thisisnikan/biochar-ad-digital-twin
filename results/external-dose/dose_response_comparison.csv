@@ -1,0 +1,7 @@
+response,model,parameters,n_doses,leave_one_dose_out_rmse,leave_one_dose_out_mae,mean_absolute_percentage_error,rank_by_held_out_rmse
+max_rate_ml_g_vs_day,log_linear_dose,2,5,14.635994584297267,11.97164301643907,22.983912334722923,1.0
+max_rate_ml_g_vs_day,dose_invariant,1,5,27.346360386015718,21.544739693846974,45.46327369824992,2.0
+max_rate_ml_g_vs_day,log_quadratic_dose,3,5,33.050528658517365,21.964957745691237,65.55786077250659,3.0
+potential_ml_g_vs,log_linear_dose,2,5,46.606455547180026,35.40368479200174,11.124324957004706,1.0
+potential_ml_g_vs,log_quadratic_dose,3,5,75.81767446522078,68.23026372951738,31.560586002937907,2.0
+potential_ml_g_vs,dose_invariant,1,5,138.42321848652784,130.84381897730597,57.8247846318739,3.0

@@ -117,6 +117,25 @@ secondary measures because points within a cumulative trajectory are
 autocorrelated. The reproducible reference output and cautious interpretation are
 stored in `results/experimental/`.
 
+## Independent dose-response challenge
+
+An independent 2024 glucose BMP study provides exact published kinetic
+parameters at five wheat-straw-biochar doses (0–8 g/L). Run:
+
+```bash
+biochar-ad benchmark-external-dose --output outputs/external-dose
+```
+
+The command compares a dose-invariant baseline, a log-linear response, and the
+digital twin's log-quadratic response by strict leave-one-dose-out prediction.
+On this small external table, log-linear dose response has lower held-out error
+for both methane potential and maximum rate. The flexible quadratic hypothesis
+is therefore **not supported over this dose range**. This is a parameter-level
+challenge, not full trajectory validation: the paper's raw triplicate reactor
+time series are available only on request. The published lag estimate also
+changes from 0.76 to 0.10 days across doses, exposing a second limitation: the
+current digital twin assumes one dose-invariant lag parameter.
+
 ## Author-shared summary-data integration
 
 An author-shared Zhang et al. (2022) workbook adds a complementary experiment:
@@ -179,10 +198,11 @@ through `.gitignore`; see [`data/README.md`](data/README.md) for the access boun
 
 Synthetic data tests software behaviour, not scientific validity. The real-data
 benchmark tests kinetic curve families and reproducible data handling, not the
-causal effect of biochar or the proposed dose-temperature response. A meaningful
-next step is an independent multi-dose, multi-temperature dataset with reactor
-replicates, preregistered comparison criteria, residual diagnostics, and practical
-parameter-identifiability analysis.
+causal effect of biochar. The external table challenges the dose-response form,
+but cannot validate complete trajectories. A meaningful next step is access to
+independent reactor-level trajectories, followed by a multi-temperature dataset
+with replicates, preregistered comparison criteria, residual diagnostics, and
+practical parameter-identifiability analysis.
 
 ## Interpretation rules
 
