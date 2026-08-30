@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Biochar&ndash;AD Digital Twin: project overview</title>
+<title>Biochar&ndash;AD Digital Twin: evidence overview</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,6 +17,8 @@
   --line:#C7D0C5;
   --flame:#1B3FC4;
   --ochre:#B06A22;
+  --teal:#2F7563;
+  --grey-bar:#9FAEA4;
   --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
   --body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
@@ -40,7 +42,7 @@ body{
 .slide.dark .eyebrow{color:#7FA394}
 .slide.dark .sub{color:#A8BCB1}
 
-/* left rail: cumulative gas volume motif */
+/* left rail */
 .rail{position:fixed;left:clamp(12px,1.7vw,26px);top:14vh;bottom:14vh;width:3px;background:var(--line);z-index:30}
 .rail span{position:absolute;left:0;top:0;width:3px;background:var(--flame);height:0;transition:height .55s cubic-bezier(.4,0,.2,1)}
 .slide.dark ~ .rail{background:#2A4239}
@@ -64,9 +66,9 @@ body.on-dark .count{color:#8FA79A}
   text-transform:uppercase;color:var(--muted);margin-bottom:clamp(14px,2.2vh,22px);
 }
 h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,5.1vw,66px);line-height:1.02;letter-spacing:-.022em;max-width:19ch}
-h2{font-family:var(--display);font-weight:600;font-size:clamp(23px,3.5vw,44px);line-height:1.08;letter-spacing:-.018em;max-width:22ch;margin-bottom:clamp(16px,2.6vh,30px)}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(23px,3.5vw,44px);line-height:1.08;letter-spacing:-.018em;max-width:24ch;margin-bottom:clamp(16px,2.6vh,30px)}
 .sub{font-size:clamp(14px,1.55vw,20px);color:var(--muted);max-width:52ch;line-height:1.55;margin-top:clamp(14px,2.4vh,24px)}
-p.lead{font-size:clamp(15px,1.6vw,21px);line-height:1.6;max-width:56ch}
+p.lead{font-size:clamp(14.5px,1.5vw,19px);line-height:1.6;max-width:58ch}
 strong{font-weight:600;color:var(--flame)}
 .slide.dark strong{color:#8FB6FF}
 
@@ -84,7 +86,7 @@ strong{font-weight:600;color:var(--flame)}
 .ghost-curve{position:absolute;right:-4%;bottom:0;width:min(62%,760px);opacity:.16;pointer-events:none}
 .ghost-curve path{fill:none;stroke:#7FE0B4;stroke-width:2}
 
-/* ---------- chart ---------- */
+/* ---------- schematic chart (problem slide) ---------- */
 .chart-wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(20px,3.4vw,54px);align-items:center}
 svg.chart{width:100%;height:auto;max-height:47vh}
 .ax{stroke:var(--line);stroke-width:1.4}
@@ -104,6 +106,34 @@ svg.chart{width:100%;height:auto;max-height:47vh}
 text.lbl{font-family:var(--mono);font-size:11px;fill:var(--muted);letter-spacing:.04em}
 text.lblc{font-family:var(--mono);font-size:12px;letter-spacing:.03em}
 
+/* ---------- real-data bar charts ---------- */
+.bar{stroke:none;transform-box:fill-box;transform-origin:bottom;transform:scaleY(0)}
+.is-active.play .bar{animation:growbar .68s cubic-bezier(.2,.7,.3,1) forwards}
+.is-active.play .bar:nth-of-type(1){animation-delay:.15s}
+.is-active.play .bar:nth-of-type(2){animation-delay:.27s}
+.is-active.play .bar:nth-of-type(3){animation-delay:.39s}
+.is-active.play .bar:nth-of-type(4){animation-delay:.51s}
+.is-active.play .bar:nth-of-type(5){animation-delay:.63s}
+.is-active.play .bar:nth-of-type(6){animation-delay:.75s}
+.is-active.play .bar:nth-of-type(7){animation-delay:.87s}
+.is-active.play .bar:nth-of-type(8){animation-delay:.99s}
+.is-active.play .bar:nth-of-type(9){animation-delay:1.11s}
+.is-active.play .bar:nth-of-type(10){animation-delay:1.23s}
+.is-active.play .bar:nth-of-type(11){animation-delay:1.35s}
+.is-active.play .bar:nth-of-type(12){animation-delay:1.47s}
+@keyframes growbar{to{transform:scaleY(1)}}
+.bar-mg{fill:var(--flame)}
+.bar-logistic{fill:var(--teal)}
+.bar-fo{fill:var(--ochre)}
+.bar-inv{fill:var(--grey-bar)}
+.bar-linear{fill:var(--flame)}
+.bar-quad{fill:var(--ochre)}
+.barval{font-family:var(--mono);font-size:10px;fill:var(--ink);text-anchor:middle}
+.legend{display:flex;flex-wrap:wrap;gap:clamp(12px,2vw,22px);margin-top:clamp(10px,1.8vh,18px)}
+.legend .item{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.legend .swatch{width:10px;height:10px;border-radius:2px;flex:none}
+.panel-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--flame);margin-bottom:8px}
+
 /* ---------- pipeline ---------- */
 .pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.5vw,20px);margin-top:clamp(10px,2vh,20px)}
 .node{border-top:2px solid var(--flame);padding-top:14px;position:relative}
@@ -114,21 +144,15 @@ text.lblc{font-family:var(--mono);font-size:12px;letter-spacing:.03em}
 .is-active.play .node::after{animation:travel 3.4s ease-in-out infinite;animation-delay:calc(var(--d) * 180ms + 700ms)}
 @keyframes travel{0%{opacity:0;left:0}12%{opacity:1}88%{opacity:1}100%{opacity:0;left:calc(100% - 8px)}}
 
-/* ---------- data table ---------- */
-.tier{margin-bottom:clamp(14px,2.4vh,26px)}
-.tier-h{display:flex;align-items:baseline;gap:12px;margin-bottom:9px}
-.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:3px 9px;border-radius:2px}
-.t1{background:var(--flame);color:#fff}
-.t2{background:var(--ochre);color:#fff}
-.t3{background:var(--paper2);color:var(--muted);border:1px solid var(--line)}
-.tier-h span{font-size:13px;color:var(--muted)}
-.vars{display:flex;flex-wrap:wrap;gap:7px}
-.var{
-  font-family:var(--mono);font-size:clamp(11px,1.05vw,13px);
-  border:1px solid var(--line);background:rgba(255,255,255,.5);
-  padding:6px 11px;border-radius:2px;transition:border-color .2s ease,background .2s ease;
-}
-.var:hover{border-color:var(--flame);background:#fff}
+/* ---------- evidence table ---------- */
+.evrow{display:grid;grid-template-columns:1fr;gap:clamp(10px,1.6vh,16px)}
+.evcard{border-top:2px solid var(--line);padding-top:10px}
+.evcard .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--flame);margin-bottom:5px}
+.slide.dark .evcard{border-top-color:#2F473D}
+.slide.dark .evcard .k{color:#8FB6FF}
+.evcard p{font-size:clamp(12.5px,1.15vw,15px);line-height:1.48;max-width:74ch;color:var(--muted)}
+.evcard p strong{color:var(--ink)}
+.slide.dark .evcard p strong{color:#E8EDE6}
 
 /* ---------- misc blocks ---------- */
 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(18px,3vw,52px);align-items:start}
@@ -146,7 +170,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
 .numlist small{display:block;color:var(--muted);font-size:clamp(12px,1.1vw,14px);margin-top:5px;line-height:1.5}
 .note{
   margin-top:clamp(16px,2.6vh,28px);border-left:2px solid var(--ochre);padding:10px 0 10px 16px;
-  font-size:clamp(12.5px,1.15vw,15px);color:var(--muted);max-width:56ch;line-height:1.55;
+  font-size:clamp(12.5px,1.15vw,15px);color:var(--muted);max-width:64ch;line-height:1.55;
 }
 .fill{background:rgba(176,106,34,.14);border-bottom:1px dashed var(--ochre);padding:1px 5px;font-family:var(--mono);font-size:.9em}
 .kpi{display:flex;gap:clamp(20px,3.4vw,56px);margin-top:clamp(16px,2.8vh,30px);flex-wrap:wrap}
@@ -155,34 +179,14 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
 .hint{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);z-index:40;transition:opacity .5s ease}
 .hint.gone{opacity:0}
 
-/* ---------- overview-deck additions ---------- */
-.codeblock{
-  font-family:var(--mono);font-size:clamp(11.5px,1.15vw,14px);line-height:1.75;
-  background:rgba(255,255,255,.5);border:1px solid var(--line);border-radius:3px;
-  padding:clamp(14px,2vh,20px) clamp(16px,2vw,22px);white-space:pre;overflow-x:auto;
-  max-width:64ch;color:var(--ink);
-}
-.slide.dark .codeblock{background:rgba(255,255,255,.05);border-color:#2F473D;color:#DCE6DE}
-.codeblock b{color:var(--flame);font-weight:500}
-.slide.dark .codeblock b{color:#8FB6FF}
-.evrow{display:grid;grid-template-columns:1fr;gap:clamp(12px,1.8vh,18px)}
-.evcard{border-top:2px solid var(--line);padding-top:12px}
-.evcard .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--flame);margin-bottom:6px}
-.slide.dark .evcard{border-top-color:#2F473D}
-.slide.dark .evcard .k{color:#8FB6FF}
-.evcard p{font-size:clamp(13px,1.2vw,15.5px);line-height:1.5;max-width:66ch;color:var(--muted)}
-.evcard p strong{color:var(--ink)}
-.slide.dark .evcard p strong{color:#E8EDE6}
-
 @media (max-width:820px){
   .chart-wrap,.two{grid-template-columns:1fr;gap:18px}
   .pipe{grid-template-columns:1fr 1fr}
   .slide{padding:26px 20px 74px 34px;justify-content:flex-start;padding-top:12vh;overflow-y:auto}
   svg.chart{max-height:34vh}
-  .codeblock{font-size:11px}
 }
 @media (prefers-reduced-motion:reduce){
-  [data-r],.curve,.dot,.brace{opacity:1!important;transform:none!important;filter:none!important;stroke-dashoffset:0!important;animation:none!important}
+  [data-r],.curve,.dot,.brace,.bar{opacity:1!important;transform:none!important;filter:none!important;stroke-dashoffset:0!important;animation:none!important}
   .node::after{animation:none!important}
 }
 </style>
@@ -197,13 +201,13 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
     <path d="M0,290 C120,288 180,180 260,130 C340,82 470,66 700,58"/>
     <path d="M0,292 C160,290 220,240 300,200 C400,152 520,128 700,118"/>
   </svg>
-  <div class="eyebrow" data-r style="--d:0">Project overview</div>
+  <div class="eyebrow" data-r style="--d:0">Project overview &middot; evidence edition</div>
   <h1 data-r style="--d:1">The Biochar&ndash;AD Digital Twin</h1>
-  <p class="sub" data-r style="--d:2">A reproducible, falsifiable modelling framework for how biochar dose and temperature shape anaerobic digestion &mdash; and an honest account of what it has proven so far, and what it still needs.</p>
+  <p class="sub" data-r style="--d:2">A reproducible, falsifiable modelling framework &mdash; walked through using the actual reproducible results committed in the repository, not illustrations.</p>
   <div class="title-meta" data-r style="--d:3">
     <div>Presented by<b>Nikan Haghighatjue</b></div>
     <div>Repository<b>github.com/thisisnikan/biochar-ad-digital-twin</b></div>
-    <div>Format<b>Project overview &middot; 2026</b></div>
+    <div>Format<b>Data-driven overview &middot; 2026</b></div>
   </div>
 </section>
 
@@ -220,16 +224,16 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
     <ul class="clean">
       <li data-r style="--d:5">Modelling side: Python, MATLAB, Fortran, numerical methods for reactor dynamics and regression.</li>
       <li data-r style="--d:6">Built independently, in the open, as the basis for a doctoral proposal.</li>
-      <li data-r style="--d:7">Public GitHub repository: code, data provenance, tests and results are all reviewable.</li>
+      <li data-r style="--d:7">Every number in this deck can be regenerated from the public GitHub repository.</li>
     </ul>
   </div>
 </section>
 
 <!-- 3 ................................................. -->
 <section class="slide">
-  <div class="eyebrow" data-r style="--d:0">The problem</div>
+  <div class="eyebrow" data-r style="--d:0">The problem &middot; illustrative, not measured data</div>
   <div class="chart-wrap">
-    <svg class="chart" viewBox="0 0 560 320" role="img" aria-label="Two cumulative methane curves with the same additive but different conditions">
+    <svg class="chart" viewBox="0 0 560 320" role="img" aria-label="Schematic: two cumulative methane curves with the same additive but different conditions">
       <line class="ax" x1="60" y1="20" x2="60" y2="272"/>
       <line class="ax" x1="60" y1="272" x2="530" y2="272"/>
       <line class="grid" x1="60" y1="70" x2="530" y2="70"/>
@@ -258,7 +262,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
     <div>
       <h2 data-r style="--d:1">One number per curve hides the mechanism</h2>
       <p class="lead" data-r style="--d:2">Batch BMP studies usually report a single cumulative-methane endpoint per treatment. That endpoint carries dose, temperature, substrate, inoculum and reactor effects all at once, with no way to tell them apart.</p>
-      <div class="note" data-r style="--d:3">A single number cannot say whether an additive made digestion <strong>faster</strong> or made it produce <strong>more</strong> &mdash; and it cannot be checked against an independent dataset.</div>
+      <div class="note" data-r style="--d:3">Everything from the next slide onward is a real, reproducible number from the repository &mdash; this schematic is the only illustrative figure in the deck.</div>
     </div>
   </div>
 </section>
@@ -266,118 +270,208 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
 <!-- 4 ................................................. -->
 <section class="slide dark">
   <div class="eyebrow" data-r style="--d:0">The question</div>
-  <h1 data-r style="--d:1;font-size:clamp(26px,3.9vw,50px);max-width:24ch">Does explicitly modelling biochar dose and temperature explain and predict methane production better than a condition-agnostic baseline?</h1>
-  <p class="sub" data-r style="--d:2">The hypothesis is written to fail: a shared dose&ndash;temperature model must beat a simple three-parameter Gompertz baseline on held-out batches, or it is rejected. That falsifiability is the point &mdash; the repository is built to test the idea, not to assume it.</p>
+  <h1 data-r style="--d:1;font-size:clamp(26px,3.9vw,50px);max-width:24ch">Does explicitly modelling biochar dose and temperature explain and predict methane production better than a simpler baseline?</h1>
+  <p class="sub" data-r style="--d:2">Written to fail: the hypothesis is rejected the moment held-out error stops favouring the extra complexity. The next slides show that test actually being run, twice, on real data.</p>
 </section>
 
 <!-- 5 ................................................. -->
 <section class="slide">
   <div class="eyebrow" data-r style="--d:0">What is built</div>
-  <h2 data-r style="--d:1">An installable, tested modelling pipeline &mdash; not a notebook</h2>
+  <h2 data-r style="--d:1">One CLI, four reproducible checks</h2>
   <div class="pipe">
     <div class="node" data-r style="--d:2">
-      <div class="n">STAGE 01</div>
-      <h3>Curated inputs</h3>
-      <p>Time-resolved BMP curves &mdash; labelled synthetic demonstration data plus dataset-specific experimental benchmarks, each tagged with provenance.</p>
+      <div class="n">DEMO</div>
+      <h3>Synthetic workflow</h3>
+      <p>Labelled synthetic data exercises the full fitting, bootstrap and held-out-batch pipeline end to end.</p>
     </div>
     <div class="node" data-r style="--d:3">
-      <div class="n">STAGE 02</div>
-      <h3>Global kinetic fit</h3>
-      <p>Modified Gompertz methane kinetics with an explicit, smooth dose response and a Q10 temperature correction, fit by robust global least squares across every condition at once.</p>
+      <div class="n">FIT</div>
+      <h3>Any BMP dataset</h3>
+      <p>Global least-squares fit of dose, temperature and Q10 kinetics to a user-supplied CSV.</p>
     </div>
     <div class="node" data-r style="--d:4">
-      <div class="n">STAGE 03</div>
-      <h3>Uncertainty &amp; baselines</h3>
-      <p>Batch-aware residual bootstrap for parameter uncertainty, compared against a parsimonious constant-Gompertz baseline using AIC, AICc and BIC.</p>
+      <div class="n">BENCHMARK-EXPERIMENTAL</div>
+      <h3>Real reactor data</h3>
+      <p>Compares curve families on Kozłowski et al. (2025) by leave-one-reactor-out RMSE. Real result on the next slide.</p>
     </div>
     <div class="node" data-r style="--d:5">
-      <div class="n">STAGE 04</div>
-      <h3>Held-out validation</h3>
-      <p>Leave-one-batch-out prediction error separates curve fitting from genuine predictive skill &mdash; the check that decides whether the model has earned the claim.</p>
+      <div class="n">BENCHMARK-EXTERNAL-DOSE</div>
+      <h3>Independent challenge</h3>
+      <p>Tests this project's own dose-response shape against an external published dataset. Real result two slides from now.</p>
     </div>
   </div>
-  <div class="note" data-r style="--d:6">Every stage runs from one command and produces reproducible CSV, JSON and publication-ready PNG outputs.</div>
+  <div class="note" data-r style="--d:6">18 automated tests and <span class="fill">ruff check .</span> run on every change, on Python 3.10 and 3.12.</div>
 </section>
 
 <!-- 6 ................................................. -->
-<section class="slide dark">
-  <div class="eyebrow" data-r style="--d:0">Try it</div>
-  <h2 data-r style="--d:1">The whole workflow, end to end, in one command</h2>
-  <div class="codeblock" data-r style="--d:2">python -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-<b>biochar-ad demo</b> --output outputs --bootstrap 100</div>
-  <p class="sub" data-r style="--d:3">Produces the synthetic input, fitted parameters, bootstrap uncertainty, baseline comparison and leave-one-batch-out error &mdash; every claim in this deck can be regenerated from the public repository.</p>
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Real data &middot; Kozłowski et al. (2025)</div>
+  <h2 data-r style="--d:1">The twin's own curve family wins independently</h2>
+  <div class="chart-wrap" data-r style="grid-template-columns:1.35fr .9fr;--d:2">
+    <svg class="chart" viewBox="0 0 620 320" role="img" aria-label="Leave-one-reactor-out RMSE by kinetic model and treatment, Kozlowski 2025 benchmark, mL methane per gram VS">
+      <line class="grid" x1="70" y1="185" x2="590" y2="185"/>
+      <line class="grid" x1="70" y1="110" x2="590" y2="110"/>
+      <line class="grid" x1="70" y1="35" x2="590" y2="35"/>
+      <text class="lbl" x="60" y="189" text-anchor="end">5</text>
+      <text class="lbl" x="60" y="114" text-anchor="end">10</text>
+      <text class="lbl" x="60" y="39" text-anchor="end">15</text>
+      <line class="ax" x1="70" y1="20" x2="70" y2="260"/>
+      <line class="ax" x1="70" y1="260" x2="590" y2="260"/>
+      <text class="lbl" x="28" y="140" transform="rotate(-90 28 140)" text-anchor="middle">held-out RMSE (mL CH&#8324;/g VS)</text>
+
+      <rect class="bar bar-mg" x="85" y="67.55" width="28" height="192.45"/>
+      <rect class="bar bar-logistic" x="121" y="45.95" width="28" height="214.05"/>
+      <rect class="bar bar-fo" x="157" y="25.4" width="28" height="234.6"/>
+      <text class="barval" x="99" y="61">12.8</text>
+      <text class="barval" x="135" y="39">14.3</text>
+      <text class="barval" x="171" y="19">15.6</text>
+      <text class="lbl" x="135" y="278" text-anchor="middle">Food waste</text>
+      <text class="lbl" x="135" y="291" text-anchor="middle">(control)</text>
+
+      <rect class="bar bar-mg" x="215" y="155.9" width="28" height="104.1"/>
+      <rect class="bar bar-logistic" x="251" y="109.1" width="28" height="150.9"/>
+      <rect class="bar bar-fo" x="287" y="97.4" width="28" height="162.6"/>
+      <text class="barval" x="229" y="150">6.9</text>
+      <text class="barval" x="265" y="103">10.1</text>
+      <text class="barval" x="301" y="91">10.8</text>
+      <text class="lbl" x="265" y="278" text-anchor="middle">+ Hydrochar</text>
+      <text class="lbl" x="265" y="291" text-anchor="middle">(240&#176;C)</text>
+
+      <rect class="bar bar-mg" x="345" y="172.7" width="28" height="87.3"/>
+      <rect class="bar bar-logistic" x="381" y="149.6" width="28" height="110.4"/>
+      <rect class="bar bar-fo" x="417" y="74.9" width="28" height="185.1"/>
+      <text class="barval" x="359" y="167">5.8</text>
+      <text class="barval" x="395" y="144">7.4</text>
+      <text class="barval" x="431" y="69">12.3</text>
+      <text class="lbl" x="395" y="278" text-anchor="middle">+ Pyrolysis biochar</text>
+      <text class="lbl" x="395" y="291" text-anchor="middle">(600&#176;C)</text>
+
+      <rect class="bar bar-mg" x="475" y="140.9" width="28" height="119.1"/>
+      <rect class="bar bar-logistic" x="511" y="93.05" width="28" height="166.95"/>
+      <rect class="bar bar-fo" x="547" y="105.2" width="28" height="154.8"/>
+      <text class="barval" x="489" y="135">7.9</text>
+      <text class="barval" x="525" y="87">11.1</text>
+      <text class="barval" x="561" y="99">10.3</text>
+      <text class="lbl" x="525" y="278" text-anchor="middle">+ Torrefaction</text>
+      <text class="lbl" x="525" y="291" text-anchor="middle">product (240&#176;C)</text>
+    </svg>
+    <div>
+      <p class="lead">Three transparent curve families &mdash; modified Gompertz, logistic, first-order &mdash; are fit separately per treatment and scored by <strong>leave-one-reactor-out RMSE</strong>: trained on two reactors, tested on the one it never saw.</p>
+      <div class="legend">
+        <span class="item"><span class="swatch" style="background:var(--flame)"></span>Modified Gompertz</span>
+        <span class="item"><span class="swatch" style="background:var(--teal)"></span>Logistic</span>
+        <span class="item"><span class="swatch" style="background:var(--ochre)"></span>First-order</span>
+      </div>
+      <div class="note">Modified Gompertz &mdash; the same curve family this project's core kinetic engine uses &mdash; has the lowest held-out error in <strong>all four</strong> treatments. Lower amendment RMSE than the control is a smoother curve, not proof of a biochar mechanism.</div>
+    </div>
+  </div>
 </section>
 
 <!-- 7 ................................................. -->
 <section class="slide">
-  <div class="eyebrow" data-r style="--d:0">Evidence already assembled</div>
-  <h2 data-r style="--d:1">Three layers of evidence, kept explicitly separate</h2>
-  <div class="evrow">
-    <div class="evcard" data-r style="--d:2">
-      <div class="k">Software demonstration</div>
-      <p><strong>Labelled synthetic BMP curves.</strong> Proves the end-to-end fitting, uncertainty and held-out-batch workflow runs correctly. Does not prove scientific validity &mdash; the data is synthetic by design.</p>
+  <div class="eyebrow" data-r style="--d:0">Real data &middot; Valentin &amp; Białowiec (2024)</div>
+  <h2 data-r style="--d:1">We tested our own hypothesis against external data &mdash; and it lost</h2>
+  <div class="two" data-r style="--d:2">
+    <div>
+      <div class="panel-title">Maximum rate (R<sub>m</sub>)</div>
+      <svg class="chart" viewBox="0 0 260 300" role="img" aria-label="Leave-one-dose-out RMSE for maximum rate by dose-response model">
+        <line class="ax" x1="50" y1="15" x2="50" y2="230"/>
+        <line class="ax" x1="50" y1="230" x2="210" y2="230"/>
+        <rect class="bar bar-inv" x="50" y="62.0" width="40" height="168.0"/>
+        <rect class="bar bar-linear" x="110" y="140.1" width="40" height="89.9"/>
+        <rect class="bar bar-quad" x="170" y="27.0" width="40" height="203.0"/>
+        <text class="barval" x="70" y="56">27.3</text>
+        <text class="barval" x="130" y="134">14.6</text>
+        <text class="barval" x="190" y="21">33.1</text>
+        <text class="lbl" x="70" y="246" text-anchor="middle">No dose</text>
+        <text class="lbl" x="70" y="258" text-anchor="middle">effect</text>
+        <text class="lbl" x="130" y="246" text-anchor="middle">Log-linear</text>
+        <text class="lbl" x="130" y="258" text-anchor="middle">(best fit)</text>
+        <text class="lbl" x="190" y="246" text-anchor="middle">Log-quadratic</text>
+        <text class="lbl" x="190" y="258" text-anchor="middle">(twin's model)</text>
+      </svg>
     </div>
-    <div class="evcard" data-r style="--d:3">
-      <div class="k">Reactor-level benchmark</div>
-      <p><strong>Koz&#322;owski et al. (2025)</strong>, 12 food-waste reactor trajectories, openly licensed (CC BY 4.0). Supports a reproducible kinetic-family comparison. Does not support a universal biochar mechanism &mdash; one temperature, one dose per treatment.</p>
-    </div>
-    <div class="evcard" data-r style="--d:4">
-      <div class="k">Author-shared summary analysis</div>
-      <p><strong>Zhang et al. (2022)</strong>, treatment means and standard deviations, ingested with a hash-verified private script. Supports kinetic/VFA analysis with explicit limitations. Does not support replicate-held-out validation &mdash; the original triplicates were lost.</p>
+    <div>
+      <div class="panel-title">Ultimate yield (P)</div>
+      <svg class="chart" viewBox="0 0 260 300" role="img" aria-label="Leave-one-dose-out RMSE for methane potential by dose-response model">
+        <line class="ax" x1="50" y1="15" x2="50" y2="230"/>
+        <line class="ax" x1="50" y1="230" x2="210" y2="230"/>
+        <rect class="bar bar-inv" x="50" y="24.7" width="40" height="205.3"/>
+        <rect class="bar bar-linear" x="110" y="160.9" width="40" height="69.1"/>
+        <rect class="bar bar-quad" x="170" y="117.6" width="40" height="112.4"/>
+        <text class="barval" x="70" y="19">138.4</text>
+        <text class="barval" x="130" y="155">46.6</text>
+        <text class="barval" x="190" y="112">75.8</text>
+        <text class="lbl" x="70" y="246" text-anchor="middle">No dose</text>
+        <text class="lbl" x="70" y="258" text-anchor="middle">effect</text>
+        <text class="lbl" x="130" y="246" text-anchor="middle">Log-linear</text>
+        <text class="lbl" x="130" y="258" text-anchor="middle">(best fit)</text>
+        <text class="lbl" x="190" y="246" text-anchor="middle">Log-quadratic</text>
+        <text class="lbl" x="190" y="258" text-anchor="middle">(twin's model)</text>
+      </svg>
     </div>
   </div>
-  <div class="note" data-r style="--d:5">Nothing here claims more than its dataset can support. That boundary is documented and reviewed on every change, in <span class="fill">docs/PROJECT_STATUS.md</span>.</div>
+  <p class="lead" data-r style="--d:3;margin-top:14px">Five independent wheat-straw-biochar doses (0&ndash;8 g/L), published kinetic parameters, strict leave-one-dose-out testing. Bars are held-out RMSE &mdash; <strong>lower is better</strong>. The digital twin's flexible log-quadratic dose response loses to a simpler log-linear form on both targets.</p>
+  <div class="note" data-r style="--d:4">This is the falsification the project is designed to surface, not hide: the current dose-response <em>shape</em> is not supported over this external range. It is a parameter-level challenge only &mdash; the paper's raw reactor trajectories were not obtained.</div>
 </section>
 
 <!-- 8 ................................................. -->
 <section class="slide dark">
+  <div class="eyebrow" data-r style="--d:0">Evidence at a glance</div>
+  <h2 data-r style="--d:1">Four layers of evidence, kept explicitly separate</h2>
+  <div class="evrow">
+    <div class="evcard" data-r style="--d:2">
+      <div class="k">Software demonstration</div>
+      <p><strong>Labelled synthetic BMP curves.</strong> Proves the fitting, uncertainty and held-out-batch workflow runs correctly. Not evidence of scientific validity &mdash; the data is synthetic by design.</p>
+    </div>
+    <div class="evcard" data-r style="--d:3">
+      <div class="k">Reactor-level benchmark</div>
+      <p><strong>Kozłowski et al. (2025),</strong> 12 food-waste reactor trajectories, CC BY 4.0. Modified Gompertz wins held-out RMSE in all 4 treatments (previous chart). One temperature, one dose per treatment &mdash; not a universal mechanism.</p>
+    </div>
+    <div class="evcard" data-r style="--d:4">
+      <div class="k">Independent dose-response challenge</div>
+      <p><strong>Valentin &amp; Białowiec (2024),</strong> 5 independent doses, CC BY 4.0. Log-linear beats the twin's log-quadratic form on held-out RMSE for both targets (previous slide) &mdash; a genuine, reported falsification.</p>
+    </div>
+    <div class="evcard" data-r style="--d:5">
+      <div class="k">Author-shared summary analysis</div>
+      <p><strong>Zhang et al. (2022),</strong> treatment means and SDs, ingested with a hash-verified private script. Kinetic/VFA analysis with explicit limitations; original triplicates were lost, so no replicate-held-out check.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 ................................................. -->
+<section class="slide">
   <div class="eyebrow" data-r style="--d:0">Honest status</div>
   <h2 data-r style="--d:1">What can and cannot be claimed right now</h2>
   <div class="two">
     <ul class="clean">
       <li data-r style="--d:2"><strong>Can claim:</strong> the software executes an auditable, reproducible end-to-end BMP workflow.</li>
-      <li data-r style="--d:3"><strong>Can claim:</strong> modified Gompertz has the lowest mean reactor-held-out RMSE within each treatment of the included open benchmark.</li>
-      <li data-r style="--d:4"><strong>Can claim:</strong> author-shared summaries can be analysed without inventing pseudo-replicates or publishing private data.</li>
+      <li data-r style="--d:3"><strong>Can claim:</strong> modified Gompertz has the lowest held-out RMSE on the open reactor-level benchmark, in every treatment.</li>
+      <li data-r style="--d:4"><strong>Can claim:</strong> an independent dataset was used to stress-test the dose-response hypothesis, and the negative result is reported, not hidden.</li>
     </ul>
     <ul class="clean">
-      <li data-r style="--d:5"><strong>Cannot claim:</strong> that biochar causally improves anaerobic digestion across studies.</li>
-      <li data-r style="--d:6"><strong>Cannot claim:</strong> that the dose&ndash;temperature response generalises beyond the demonstration.</li>
-      <li data-r style="--d:7"><strong>Cannot claim:</strong> that this is already an operational plant digital twin.</li>
+      <li data-r style="--d:5"><strong>Cannot claim:</strong> that the log-quadratic dose-response form is supported by independent data &mdash; it currently is not.</li>
+      <li data-r style="--d:6"><strong>Cannot claim:</strong> that biochar causally improves anaerobic digestion across studies.</li>
+      <li data-r style="--d:7"><strong>Cannot claim:</strong> that this research prototype is already an operational plant digital twin.</li>
     </ul>
   </div>
-  <div class="note" data-r style="--d:8">This is a <strong>reproducible research prototype for falsifiable kinetic modelling</strong>, described that way on purpose &mdash; not yet a validated predictive product.</div>
-</section>
-
-<!-- 9 ................................................. -->
-<section class="slide">
-  <div class="eyebrow" data-r style="--d:0">Quality controls</div>
-  <h2 data-r style="--d:1">Every change is checked before it lands</h2>
-  <div class="kpi">
-    <div data-r style="--d:2"><span>15</span><small>automated tests</small></div>
-    <div data-r style="--d:3"><span>2</span><small>Python versions in CI</small></div>
-    <div data-r style="--d:4"><span>0</span><small>lint errors tolerated</small></div>
-  </div>
-  <ul class="clean" style="margin-top:clamp(20px,3.4vh,36px)">
-    <li data-r style="--d:5">GitHub Actions runs <span class="fill">ruff check</span> and <span class="fill">pytest</span> on Python 3.10 and 3.12 for every pull request.</li>
-    <li data-r style="--d:6">Contribution rules require dataset provenance, replicate honesty and a passing test suite &mdash; documented in <span class="fill">CONTRIBUTING.md</span>.</li>
-    <li data-r style="--d:7">Issue and pull-request templates make dataset licensing, source hashes and privacy checks part of the process, not an afterthought.</li>
-  </ul>
+  <div class="note" data-r style="--d:8">A <strong>reproducible research prototype for falsifiable kinetic modelling</strong> &mdash; that description, and every number above, is maintained in <span class="fill">docs/PROJECT_STATUS.md</span>.</div>
 </section>
 
 <!-- 10 ................................................ -->
 <section class="slide dark">
-  <div class="eyebrow" data-r style="--d:0">Repository map</div>
-  <h2 data-r style="--d:1">Structured so a reviewer can find anything in one look</h2>
-  <div class="codeblock" data-r style="--d:2"><b>src/biochar_ad_twin/</b>   installable modelling and reporting package
-<b>tests/</b>                 unit and end-to-end workflow tests
-<b>data/experimental/</b>     redistributable, provenance-documented inputs
-<b>scripts/</b>               deterministic ingestion and analysis entry points
-<b>results/</b>               reproducible reference outputs and interpretation
-<b>presentation/</b>         this deck
-<b>docs/</b>                  architecture map, project status and validation roadmap</div>
-  <p class="sub" data-r style="--d:3">Private author-shared inputs and their derived outputs are excluded through <span class="fill">.gitignore</span> and never published &mdash; <span class="fill">data/private/</span> and <span class="fill">results/private/</span> stay off the repository entirely.</p>
+  <div class="eyebrow" data-r style="--d:0">Reproducibility</div>
+  <h2 data-r style="--d:1">Every chart in this deck is one command away</h2>
+  <div class="kpi">
+    <div data-r style="--d:2"><span>18</span><small>automated tests</small></div>
+    <div data-r style="--d:3"><span>4</span><small>CLI commands</small></div>
+    <div data-r style="--d:4"><span>0</span><small>lint errors tolerated</small></div>
+  </div>
+  <ul class="clean" style="margin-top:clamp(20px,3.4vh,36px)">
+    <li data-r style="--d:5"><span class="fill">biochar-ad benchmark-experimental</span> regenerates the Kozłowski chart's numbers.</li>
+    <li data-r style="--d:6"><span class="fill">biochar-ad benchmark-external-dose</span> regenerates the falsification chart's numbers.</li>
+    <li data-r style="--d:7">GitHub Actions runs <span class="fill">ruff check</span> and <span class="fill">pytest</span> on Python 3.10 and 3.12 on every change; <span class="fill">docs/ARCHITECTURE.md</span> maps every module for a reader new to the project.</li>
+  </ul>
 </section>
 
 <!-- 11 ................................................ -->
@@ -385,32 +479,24 @@ pip install -e ".[dev]"
   <div class="eyebrow" data-r style="--d:0">Roadmap</div>
   <h2 data-r style="--d:1">The next validation gate</h2>
   <ol class="numlist">
-    <li data-r style="--d:2"><div><p>Reactor-level methane or biogas trajectories.</p><small>Not summary endpoints &mdash; the kinetic parameters need real curves.</small></div></li>
-    <li data-r style="--d:3"><div><p>At least three biochar doses and more than one temperature.</p><small>The current open benchmark has one of each; the dose&ndash;temperature hypothesis needs a range.</small></div></li>
+    <li data-r style="--d:2"><div><p>Reactor-level methane or biogas trajectories.</p><small>Not summary endpoints or table-level parameters &mdash; the kinetic parameters need real curves.</small></div></li>
+    <li data-r style="--d:3"><div><p>At least three biochar doses and more than one temperature.</p><small>Valentin &amp; Białowiec (2024) covers five doses but one temperature, at the parameter level only.</small></div></li>
     <li data-r style="--d:4"><div><p>Biological or reactor replicates, plus inoculum-only controls.</p><small>To separate real treatment effects from batch-to-batch scatter.</small></div></li>
     <li data-r style="--d:5"><div><p>Substrate, inoculum, S/I ratio, reactor and material metadata.</p><small>The confounders that make cross-study comparison meaningful instead of misleading.</small></div></li>
-    <li data-r style="--d:6"><div><p>A preregistered held-out-study comparison against parsimonious baselines.</p><small>So the model can fail publicly, not just succeed quietly.</small></div></li>
+    <li data-r style="--d:6"><div><p>A preregistered held-out-study comparison against parsimonious baselines.</p><small>So the model can fail publicly, not just succeed quietly &mdash; as it just did on dose response.</small></div></li>
   </ol>
 </section>
 
 <!-- 12 ................................................ -->
 <section class="slide dark">
-  <div class="eyebrow" data-r style="--d:0">Why it matters</div>
-  <h2 data-r style="--d:1">A framework built to be proven wrong, not just published</h2>
-  <p class="lead" data-r style="--d:2">If the dose&ndash;temperature hypothesis survives independent, multi-condition reactor data, the same framework can guide which material and dose is worth testing before anyone runs a batch. If it does not survive, that negative result is written into the repository, not hidden by it &mdash; and it still tells the field what its data can and cannot support.</p>
-  <div class="note" data-r style="--d:3">Ongoing conversations, including with Dr. Benedikt H&uuml;lsemann at the University of Hohenheim, are aimed at closing exactly this data gap.</div>
-</section>
-
-<!-- 13 ................................................ -->
-<section class="slide">
   <div class="eyebrow" data-r style="--d:0">Take-aways</div>
   <h2 data-r style="--d:1">Three things worth remembering</h2>
   <ol class="numlist">
-    <li data-r style="--d:2"><div><p>It is a reproducible, tested software pipeline today &mdash; not a validated causal model of biochar effects yet.</p></div></li>
-    <li data-r style="--d:3"><div><p>Every claim is scoped to its evidence, in the open, and re-checked on every change.</p></div></li>
+    <li data-r style="--d:2"><div><p>The kinetic curve family this project uses already wins independently, on real reactor data.</p></div></li>
+    <li data-r style="--d:3"><div><p>The dose-response <em>shape</em> does not, yet &mdash; and that result is published in the repository, not buried.</p></div></li>
     <li data-r style="--d:4"><div><p>What it needs next is independent, multi-dose, multi-temperature reactor data with intact replicates.</p></div></li>
   </ol>
-  <p class="sub" data-r style="--d:5">Thank you. The repository, including this deck, is public and open to review.<br>
+  <p class="sub" data-r style="--d:5">Thank you. The repository, including this deck and every underlying number, is public and open to review.<br>
   <span style="font-family:var(--mono);font-size:13px">github.com/thisisnikan/biochar-ad-digital-twin &middot; nikan.haghighatjoo@gmail.com</span></p>
 </section>
 
@@ -418,7 +504,7 @@ pip install -e ".[dev]"
 
 <div class="rail"><span id="railfill"></span></div>
 <div class="nav">
-  <span class="count" id="count">01 / 13</span>
+  <span class="count" id="count">01 / 12</span>
   <button id="prev" aria-label="Previous slide">&#8592;</button>
   <button id="next" aria-label="Next slide">&#8594;</button>
 </div>
