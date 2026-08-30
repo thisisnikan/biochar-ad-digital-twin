@@ -1,10 +1,25 @@
-# Hohenheim AD Modelling Presentation
+# Presentation decks
 
-This folder contains the animated single-file HTML presentation prepared for a research discussion with Dr. Benedikt Hülsemann at the University of Hohenheim.
+This folder contains two animated, single-file HTML presentations. Both share the same
+visual system and controls, and both have no build step or required JavaScript packages;
+Google Fonts is the only external visual dependency.
 
-The deck connects the Biochar–AD Digital Twin with a proposed cross-study modelling framework designed to separate material effects from inoculum and operating-condition effects. It distinguishes current evidence from open hypotheses, defines the next validation gate, and makes a focused request for time-resolved experimental data.
+## `overview.html` — project overview
 
-## Narrative
+A general-audience deck explaining the whole idea of the Biochar–AD Digital Twin: the
+confounding problem it addresses, the falsifiable research question, what the software
+pipeline actually does, the evidence already assembled, an honest current-status readout,
+the repository structure and quality controls, and the next validation gate. Use this deck
+for any meeting where the audience needs the whole picture, not a specific data request.
+
+## `index.html` — Hohenheim research discussion
+
+The deck prepared for a research discussion with Dr. Benedikt Hülsemann at the University
+of Hohenheim. It connects the Biochar–AD Digital Twin with a proposed cross-study modelling
+framework designed to separate material effects from inoculum and operating-condition
+effects, and makes a focused request for time-resolved experimental data.
+
+### Narrative
 
 1. Establish the confounding problem.
 2. Explain why kinetic parameters and reactor-level curves matter.
@@ -14,7 +29,7 @@ The deck connects the Biochar–AD Digital Twin with a proposed cross-study mode
 
 ## Open locally
 
-Download `index.html` and open it in a modern web browser. No installation or build step is required.
+Download the relevant file and open it in a modern web browser.
 
 - `Left` / `Right`, `Page Up` / `Page Down`, or click: navigate
 - `Home` / `End`: first or last slide
@@ -23,6 +38,7 @@ Download `index.html` and open it in a modern web browser. No installation or bu
 
 ## Edit and publish
 
-Edit `index.html`, commit the change, and verify the deck locally before publishing. The file has no required JavaScript packages or build step; Google Fonts are the only external visual dependency.
+Edit the file, commit the change, and verify the deck locally before publishing.
 
-The deck intentionally avoids unverified paper titles, invented results and claims beyond the evidence documented in [`../docs/PROJECT_STATUS.md`](../docs/PROJECT_STATUS.md).
+Both decks intentionally avoid unverified paper titles, invented results and claims beyond
+the evidence documented in [`../docs/PROJECT_STATUS.md`](../docs/PROJECT_STATUS.md).
