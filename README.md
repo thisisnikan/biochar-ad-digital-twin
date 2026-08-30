@@ -1,11 +1,29 @@
 # Biochar–AD Digital Twin
 
 [![CI](https://github.com/thisisnikan/biochar-ad-digital-twin/actions/workflows/ci.yml/badge.svg)](https://github.com/thisisnikan/biochar-ad-digital-twin/actions)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-1B3FC4)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-1B3FC4)](LICENSE)
+[![Scientific status: research prototype](https://img.shields.io/badge/status-research%20prototype-B06A22)](docs/PROJECT_STATUS.md)
 
 A reproducible Python workflow for analysing batch biomethane potential (BMP)
 experiments with biochar amendment. It fits all dose–temperature conditions
 simultaneously, quantifies goodness of fit, and estimates parameter uncertainty
 with a batch-aware residual bootstrap.
+
+**Start here:** [Scientific status](docs/PROJECT_STATUS.md) ·
+[Data provenance](data/README.md) · [Reproducible results](results/README.md) ·
+[Research presentation](presentation/README.md) · [Contributing](CONTRIBUTING.md)
+
+## Current evidence at a glance
+
+| Evidence layer | Dataset | What it supports | What it does not support |
+| --- | --- | --- | --- |
+| Software demonstration | Labelled synthetic BMP curves | End-to-end fitting, uncertainty and held-out-batch workflow | Scientific validation |
+| Reactor-level benchmark | Kozłowski et al. (2025), 12 trajectories | Reproducible kinetic-family comparison | A universal biochar mechanism |
+| Author-shared summary analysis | Zhang et al. (2022), treatment means and SDs | Kinetic/VFA analysis with explicit limitations | Replicate-held-out validation or new significance tests |
+
+The exact readiness assessment, limitations and next validation gate are maintained in
+[`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md).
 
 ## Research question and falsifiable hypothesis
 
@@ -132,6 +150,21 @@ pytest -q
 ```
 
 GitHub Actions runs both checks on Python 3.10 and 3.12.
+
+## Repository map
+
+```text
+src/biochar_ad_twin/   installable modelling and reporting package
+tests/                 unit and end-to-end workflow tests
+data/experimental/     redistributable, provenance-documented inputs
+scripts/               deterministic ingestion and analysis entry points
+results/               reproducible reference outputs and interpretation
+presentation/          animated research-discussion deck
+docs/                  project status, scope and validation roadmap
+```
+
+Private author-shared inputs and their derived private outputs are intentionally excluded
+through `.gitignore`; see [`data/README.md`](data/README.md) for the access boundary.
 
 ## Responsible use and next validation step
 

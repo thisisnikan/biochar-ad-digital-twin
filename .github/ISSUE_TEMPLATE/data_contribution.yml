@@ -1,0 +1,50 @@
+name: Dataset contribution
+description: Propose an experimental dataset for validation
+title: "[Data]: "
+labels: [data]
+body:
+  - type: input
+    id: citation
+    attributes:
+      label: Citation or DOI
+    validations:
+      required: true
+  - type: dropdown
+    id: level
+    attributes:
+      label: Data level
+      options:
+        - Reactor-level time series
+        - Treatment mean with uncertainty
+        - Endpoint or fitted parameters only
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: Experimental design
+      description: Doses, temperatures, replicates, controls, substrate, inoculum and S/I ratio.
+    validations:
+      required: true
+  - type: input
+    id: license
+    attributes:
+      label: License or sharing permission
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Available files and variables
+      description: Describe the files without uploading private or restricted data.
+    validations:
+      required: true
+  - type: checkboxes
+    id: integrity
+    attributes:
+      label: Integrity checks
+      options:
+        - label: I will not represent summaries as reactor-level replicates.
+          required: true
+        - label: I have permission to share any files I propose to publish.
+          required: true
