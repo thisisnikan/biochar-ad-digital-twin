@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Separating material effects from inoculum effects in AD</title>
+<title>Biochar&ndash;AD Digital Twin: project overview</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -155,11 +155,31 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
 .hint{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);z-index:40;transition:opacity .5s ease}
 .hint.gone{opacity:0}
 
+/* ---------- overview-deck additions ---------- */
+.codeblock{
+  font-family:var(--mono);font-size:clamp(11.5px,1.15vw,14px);line-height:1.75;
+  background:rgba(255,255,255,.5);border:1px solid var(--line);border-radius:3px;
+  padding:clamp(14px,2vh,20px) clamp(16px,2vw,22px);white-space:pre;overflow-x:auto;
+  max-width:64ch;color:var(--ink);
+}
+.slide.dark .codeblock{background:rgba(255,255,255,.05);border-color:#2F473D;color:#DCE6DE}
+.codeblock b{color:var(--flame);font-weight:500}
+.slide.dark .codeblock b{color:#8FB6FF}
+.evrow{display:grid;grid-template-columns:1fr;gap:clamp(12px,1.8vh,18px)}
+.evcard{border-top:2px solid var(--line);padding-top:12px}
+.evcard .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--flame);margin-bottom:6px}
+.slide.dark .evcard{border-top-color:#2F473D}
+.slide.dark .evcard .k{color:#8FB6FF}
+.evcard p{font-size:clamp(13px,1.2vw,15.5px);line-height:1.5;max-width:66ch;color:var(--muted)}
+.evcard p strong{color:var(--ink)}
+.slide.dark .evcard p strong{color:#E8EDE6}
+
 @media (max-width:820px){
   .chart-wrap,.two{grid-template-columns:1fr;gap:18px}
   .pipe{grid-template-columns:1fr 1fr}
   .slide{padding:26px 20px 74px 34px;justify-content:flex-start;padding-top:12vh;overflow-y:auto}
   svg.chart{max-height:34vh}
+  .codeblock{font-size:11px}
 }
 @media (prefers-reduced-motion:reduce){
   [data-r],.curve,.dot,.brace{opacity:1!important;transform:none!important;filter:none!important;stroke-dashoffset:0!important;animation:none!important}
@@ -177,20 +197,20 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
     <path d="M0,290 C120,288 180,180 260,130 C340,82 470,66 700,58"/>
     <path d="M0,292 C160,290 220,240 300,200 C400,152 520,128 700,118"/>
   </svg>
-  <div class="eyebrow" data-r style="--d:0">Project discussion &middot; University of Hohenheim</div>
-  <h1 data-r style="--d:1">Separating material effects from inoculum effects in anaerobic digestion</h1>
-  <p class="sub" data-r style="--d:2">A cross-study modelling project, and the experimental data it needs to be validated.</p>
+  <div class="eyebrow" data-r style="--d:0">Project overview</div>
+  <h1 data-r style="--d:1">The Biochar&ndash;AD Digital Twin</h1>
+  <p class="sub" data-r style="--d:2">A reproducible, falsifiable modelling framework for how biochar dose and temperature shape anaerobic digestion &mdash; and an honest account of what it has proven so far, and what it still needs.</p>
   <div class="title-meta" data-r style="--d:3">
     <div>Presented by<b>Nikan Haghighatjue</b></div>
-    <div>For<b>Dr. Benedikt H&uuml;lsemann</b></div>
-    <div>Date<b class="fill">[insert date]</b></div>
+    <div>Repository<b>github.com/thisisnikan/biochar-ad-digital-twin</b></div>
+    <div>Format<b>Project overview &middot; 2026</b></div>
   </div>
 </section>
 
 <!-- 2 ................................................. -->
 <section class="slide">
   <div class="eyebrow" data-r style="--d:0">Background</div>
-  <h2 data-r style="--d:1">Two minutes on where I come from</h2>
+  <h2 data-r style="--d:1">Two minutes on where this comes from</h2>
   <div class="two">
     <ul class="clean">
       <li data-r style="--d:2">MSc Chemical Engineering, Sapienza University of Rome, 2025.</li>
@@ -198,9 +218,9 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
       <li data-r style="--d:4">Pilot-scale continuous-flow hydroprocessing at RIPI, Tehran, on a 50 L unit.</li>
     </ul>
     <ul class="clean">
-      <li data-r style="--d:5">Modelling side: Python, MATLAB, Fortran, numerical methods for reactor dynamics, regression and tree-based models.</li>
-      <li data-r style="--d:6">I am building this project independently, as the basis for a doctoral proposal.</li>
-      <li data-r style="--d:7">Based in Rome, authorised to work in the EU.</li>
+      <li data-r style="--d:5">Modelling side: Python, MATLAB, Fortran, numerical methods for reactor dynamics and regression.</li>
+      <li data-r style="--d:6">Built independently, in the open, as the basis for a doctoral proposal.</li>
+      <li data-r style="--d:7">Public GitHub repository: code, data provenance, tests and results are all reviewable.</li>
     </ul>
   </div>
 </section>
@@ -209,7 +229,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
 <section class="slide">
   <div class="eyebrow" data-r style="--d:0">The problem</div>
   <div class="chart-wrap">
-    <svg class="chart" viewBox="0 0 560 320" role="img" aria-label="Two cumulative methane curves with the same additive but different inocula">
+    <svg class="chart" viewBox="0 0 560 320" role="img" aria-label="Two cumulative methane curves with the same additive but different conditions">
       <line class="ax" x1="60" y1="20" x2="60" y2="272"/>
       <line class="ax" x1="60" y1="272" x2="530" y2="272"/>
       <line class="grid" x1="60" y1="70" x2="530" y2="70"/>
@@ -232,13 +252,13 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
         <line x1="514" y1="110" x2="526" y2="110" stroke="#B06A22" stroke-width="1.5"/>
         <text class="lblc" x="534" y="92" fill="#B06A22">&#916;</text>
       </g>
-      <text class="lblc" x="300" y="96" fill="#1B3FC4">inoculum A</text>
-      <text class="lblc" x="330" y="176" fill="#B06A22">inoculum B</text>
+      <text class="lblc" x="300" y="96" fill="#1B3FC4">higher dose / temp</text>
+      <text class="lblc" x="290" y="176" fill="#B06A22">lower dose / temp</text>
     </svg>
     <div>
-      <h2 data-r style="--d:1">The same additive, two different answers</h2>
-      <p class="lead" data-r style="--d:2">Reported methane improvements from biochar and carbon materials range from a few percent to almost double. The published number carries the additive, the inoculum, the substrate, the S/I ratio, the reactor and the temperature, all at once.</p>
-      <div class="note" data-r style="--d:3">Most papers report only the cumulative endpoint. One number per treatment cannot tell you whether the additive made digestion <strong>faster</strong> or made it produce <strong>more</strong>.</div>
+      <h2 data-r style="--d:1">One number per curve hides the mechanism</h2>
+      <p class="lead" data-r style="--d:2">Batch BMP studies usually report a single cumulative-methane endpoint per treatment. That endpoint carries dose, temperature, substrate, inoculum and reactor effects all at once, with no way to tell them apart.</p>
+      <div class="note" data-r style="--d:3">A single number cannot say whether an additive made digestion <strong>faster</strong> or made it produce <strong>more</strong> &mdash; and it cannot be checked against an independent dataset.</div>
     </div>
   </div>
 </section>
@@ -246,158 +266,159 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
 <!-- 4 ................................................. -->
 <section class="slide dark">
   <div class="eyebrow" data-r style="--d:0">The question</div>
-  <h1 data-r style="--d:1;font-size:clamp(26px,3.9vw,50px);max-width:24ch">Can a model trained across heterogeneous studies attribute a methane improvement to the material itself, once inoculum and operating conditions are accounted for?</h1>
-  <p class="sub" data-r style="--d:2">If the answer is yes, the same framework predicts which material and dose is worth testing before anyone runs a batch. If the answer is no, that result is worth publishing too, because it tells the field what its datasets can and cannot support.</p>
+  <h1 data-r style="--d:1;font-size:clamp(26px,3.9vw,50px);max-width:24ch">Does explicitly modelling biochar dose and temperature explain and predict methane production better than a condition-agnostic baseline?</h1>
+  <p class="sub" data-r style="--d:2">The hypothesis is written to fail: a shared dose&ndash;temperature model must beat a simple three-parameter Gompertz baseline on held-out batches, or it is rejected. That falsifiability is the point &mdash; the repository is built to test the idea, not to assume it.</p>
 </section>
 
 <!-- 5 ................................................. -->
 <section class="slide">
-  <div class="eyebrow" data-r style="--d:0">Modelling framework</div>
-  <h2 data-r style="--d:1">Four stages, kinetics before regression</h2>
+  <div class="eyebrow" data-r style="--d:0">What is built</div>
+  <h2 data-r style="--d:1">An installable, tested modelling pipeline &mdash; not a notebook</h2>
   <div class="pipe">
     <div class="node" data-r style="--d:2">
       <div class="n">STAGE 01</div>
-      <h3>Curated dataset</h3>
-      <p>Time-resolved methane curves from published and shared experiments, stored with their substrate, inoculum and reactor metadata intact.</p>
+      <h3>Curated inputs</h3>
+      <p>Time-resolved BMP curves &mdash; labelled synthetic demonstration data plus dataset-specific experimental benchmarks, each tagged with provenance.</p>
     </div>
     <div class="node" data-r style="--d:3">
       <div class="n">STAGE 02</div>
-      <h3>Kinetic fitting</h3>
-      <p>Modified Gompertz and first-order fits per experiment, giving lag phase &#955;, maximum rate R&#8344; and ultimate yield P for every replicate.</p>
+      <h3>Global kinetic fit</h3>
+      <p>Modified Gompertz methane kinetics with an explicit, smooth dose response and a Q10 temperature correction, fit by robust global least squares across every condition at once.</p>
     </div>
     <div class="node" data-r style="--d:4">
       <div class="n">STAGE 03</div>
-      <h3>Cross-study regression</h3>
-      <p>Random forest and gradient boosting on the kinetic parameters, with material descriptors, inoculum descriptors and operating conditions as separate feature blocks.</p>
+      <h3>Uncertainty &amp; baselines</h3>
+      <p>Batch-aware residual bootstrap for parameter uncertainty, compared against a parsimonious constant-Gompertz baseline using AIC, AICc and BIC.</p>
     </div>
     <div class="node" data-r style="--d:5">
       <div class="n">STAGE 04</div>
-      <h3>Attribution and validation</h3>
-      <p>SHAP values to see which block carries the effect, then held-out validation on studies never used in training.</p>
+      <h3>Held-out validation</h3>
+      <p>Leave-one-batch-out prediction error separates curve fitting from genuine predictive skill &mdash; the check that decides whether the model has earned the claim.</p>
     </div>
   </div>
-  <div class="note" data-r style="--d:6">The target variables are kinetic parameters, not raw yields. That is the reason time series matter more to this project than endpoint tables.</div>
+  <div class="note" data-r style="--d:6">Every stage runs from one command and produces reproducible CSV, JSON and publication-ready PNG outputs.</div>
 </section>
 
 <!-- 6 ................................................. -->
-<section class="slide">
-  <div class="eyebrow" data-r style="--d:0">Why time-resolved data</div>
-  <h2 data-r style="--d:1">One endpoint gives one number. A curve gives three.</h2>
-  <div class="kpi">
-    <div data-r style="--d:2"><span>&#955;</span><small>lag phase</small></div>
-    <div data-r style="--d:3"><span>R&#8344;</span><small>maximum rate</small></div>
-    <div data-r style="--d:4"><span>P</span><small>ultimate yield</small></div>
-  </div>
-  <ul class="clean" style="margin-top:clamp(20px,3.4vh,36px)">
-    <li data-r style="--d:5">Conductive additives are expected to act mainly on <strong>&#955; and R&#8344;</strong>, through interspecies electron transfer, not necessarily on P.</li>
-    <li data-r style="--d:6">Endpoint-only data collapses all three into one value, so the mechanism becomes invisible and the model can only learn correlations.</li>
-    <li data-r style="--d:7">Replicate-level curves also give an honest error estimate, which decides whether a reported improvement is real or within scatter.</li>
-  </ul>
+<section class="slide dark">
+  <div class="eyebrow" data-r style="--d:0">Try it</div>
+  <h2 data-r style="--d:1">The whole workflow, end to end, in one command</h2>
+  <div class="codeblock" data-r style="--d:2">python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+<b>biochar-ad demo</b> --output outputs --bootstrap 100</div>
+  <p class="sub" data-r style="--d:3">Produces the synthetic input, fitted parameters, bootstrap uncertainty, baseline comparison and leave-one-batch-out error &mdash; every claim in this deck can be regenerated from the public repository.</p>
 </section>
 
 <!-- 7 ................................................. -->
 <section class="slide">
-  <div class="eyebrow" data-r style="--d:0">Your work in focus</div>
-  <h2 data-r style="--d:1">Where Hohenheim fits</h2>
-  <ul class="clean">
-    <li data-r style="--d:2"><strong>Hohenheim Biogas Yield Test and BMP methodology.</strong> Standardised inoculum handling and test protocol, which is exactly the metadata most published datasets are missing.</li>
-    <li data-r style="--d:3"><strong>Inoculum effects on measured biogas potential.</strong> Directly relevant to the confounding problem on the previous slides.</li>
-    <li data-r style="--d:4"><strong>Hydrochar, HTC process water and digestate in anaerobic digestion.</strong> The material side of the same question.</li>
-    <li data-r style="--d:5">Specific papers I would like to discuss: <span class="fill">[paper 1]</span> <span class="fill">[paper 2]</span> <span class="fill">[paper 3]</span></li>
-  </ul>
-  <div class="note" data-r style="--d:6">Question for you: which of your studies do you consider the most reliable source of raw kinetic data, and which ones would you steer me away from?</div>
+  <div class="eyebrow" data-r style="--d:0">Evidence already assembled</div>
+  <h2 data-r style="--d:1">Three layers of evidence, kept explicitly separate</h2>
+  <div class="evrow">
+    <div class="evcard" data-r style="--d:2">
+      <div class="k">Software demonstration</div>
+      <p><strong>Labelled synthetic BMP curves.</strong> Proves the end-to-end fitting, uncertainty and held-out-batch workflow runs correctly. Does not prove scientific validity &mdash; the data is synthetic by design.</p>
+    </div>
+    <div class="evcard" data-r style="--d:3">
+      <div class="k">Reactor-level benchmark</div>
+      <p><strong>Koz&#322;owski et al. (2025)</strong>, 12 food-waste reactor trajectories, openly licensed (CC BY 4.0). Supports a reproducible kinetic-family comparison. Does not support a universal biochar mechanism &mdash; one temperature, one dose per treatment.</p>
+    </div>
+    <div class="evcard" data-r style="--d:4">
+      <div class="k">Author-shared summary analysis</div>
+      <p><strong>Zhang et al. (2022)</strong>, treatment means and standard deviations, ingested with a hash-verified private script. Supports kinetic/VFA analysis with explicit limitations. Does not support replicate-held-out validation &mdash; the original triplicates were lost.</p>
+    </div>
+  </div>
+  <div class="note" data-r style="--d:5">Nothing here claims more than its dataset can support. That boundary is documented and reviewed on every change, in <span class="fill">docs/PROJECT_STATUS.md</span>.</div>
 </section>
 
 <!-- 8 ................................................. -->
-<section class="slide">
-  <div class="eyebrow" data-r style="--d:0">Data request</div>
-  <h2 data-r style="--d:1">What I would ask for, in priority order</h2>
-
-  <div class="tier" data-r style="--d:2">
-    <div class="tier-h"><span class="tag t1">Essential</span><span>without these the model cannot be fitted</span></div>
-    <div class="vars">
-      <span class="var">CH&#8324; or biogas volume vs time</span>
-      <span class="var">per replicate, not averaged</span>
-      <span class="var">substrate ID + TS/VS</span>
-      <span class="var">inoculum source + VS</span>
-      <span class="var">S/I ratio</span>
-      <span class="var">temperature</span>
-      <span class="var">reactor volume + mode</span>
-    </div>
+<section class="slide dark">
+  <div class="eyebrow" data-r style="--d:0">Honest status</div>
+  <h2 data-r style="--d:1">What can and cannot be claimed right now</h2>
+  <div class="two">
+    <ul class="clean">
+      <li data-r style="--d:2"><strong>Can claim:</strong> the software executes an auditable, reproducible end-to-end BMP workflow.</li>
+      <li data-r style="--d:3"><strong>Can claim:</strong> modified Gompertz has the lowest mean reactor-held-out RMSE within each treatment of the included open benchmark.</li>
+      <li data-r style="--d:4"><strong>Can claim:</strong> author-shared summaries can be analysed without inventing pseudo-replicates or publishing private data.</li>
+    </ul>
+    <ul class="clean">
+      <li data-r style="--d:5"><strong>Cannot claim:</strong> that biochar causally improves anaerobic digestion across studies.</li>
+      <li data-r style="--d:6"><strong>Cannot claim:</strong> that the dose&ndash;temperature response generalises beyond the demonstration.</li>
+      <li data-r style="--d:7"><strong>Cannot claim:</strong> that this is already an operational plant digital twin.</li>
+    </ul>
   </div>
-
-  <div class="tier" data-r style="--d:3">
-    <div class="tier-h"><span class="tag t2">Valuable</span><span>these separate mechanism from correlation</span></div>
-    <div class="vars">
-      <span class="var">pH over time</span>
-      <span class="var">VFA profile</span>
-      <span class="var">alkalinity / FOS-TAC</span>
-      <span class="var">gas composition</span>
-      <span class="var">additive type + dose</span>
-      <span class="var">additive characterization</span>
-    </div>
-  </div>
-
-  <div class="tier" data-r style="--d:4">
-    <div class="tier-h"><span class="tag t3">If available</span><span>useful, not a condition</span></div>
-    <div class="vars">
-      <span class="var">blank / inoculum-only controls</span>
-      <span class="var">standard deviations</span>
-      <span class="var">inoculum activity test</span>
-      <span class="var">pretreatment history</span>
-    </div>
-  </div>
-
-  <div class="note" data-r style="--d:5">Original units, treatment names and processing history are preserved exactly as you provide them. I do not reinterpret or renormalise anything without asking first.</div>
+  <div class="note" data-r style="--d:8">This is a <strong>reproducible research prototype for falsifiable kinetic modelling</strong>, described that way on purpose &mdash; not yet a validated predictive product.</div>
 </section>
 
 <!-- 9 ................................................. -->
-<section class="slide dark">
-  <div class="eyebrow" data-r style="--d:0">Your time</div>
-  <h2 data-r style="--d:1">You mentioned this could take hours. It should not.</h2>
-  <ol class="numlist">
-    <li data-r style="--d:2"><div><p>You export the raw files in whatever form they already exist.</p><small>Excel sheets, instrument exports, lab logs, scanned protocols. No cleaning, no reformatting, no renaming.</small></div></li>
-    <li data-r style="--d:3"><div><p>I do the structuring, unit harmonisation and kinetic fitting.</p><small>This is the part of the work I am set up to do, and it is the part I want to be responsible for.</small></div></li>
-    <li data-r style="--d:4"><div><p>You get the cleaned, documented dataset back.</p><small>Machine-readable, with a data dictionary and the fitted kinetic parameters, usable for your own group regardless of what happens to my model.</small></div></li>
-  </ol>
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Quality controls</div>
+  <h2 data-r style="--d:1">Every change is checked before it lands</h2>
+  <div class="kpi">
+    <div data-r style="--d:2"><span>15</span><small>automated tests</small></div>
+    <div data-r style="--d:3"><span>2</span><small>Python versions in CI</small></div>
+    <div data-r style="--d:4"><span>0</span><small>lint errors tolerated</small></div>
+  </div>
+  <ul class="clean" style="margin-top:clamp(20px,3.4vh,36px)">
+    <li data-r style="--d:5">GitHub Actions runs <span class="fill">ruff check</span> and <span class="fill">pytest</span> on Python 3.10 and 3.12 for every pull request.</li>
+    <li data-r style="--d:6">Contribution rules require dataset provenance, replicate honesty and a passing test suite &mdash; documented in <span class="fill">CONTRIBUTING.md</span>.</li>
+    <li data-r style="--d:7">Issue and pull-request templates make dataset licensing, source hashes and privacy checks part of the process, not an afterthought.</li>
+  </ul>
 </section>
 
 <!-- 10 ................................................ -->
-<section class="slide">
-  <div class="eyebrow" data-r style="--d:0">Terms</div>
-  <h2 data-r style="--d:1">How the data would be handled</h2>
-  <div class="two">
-    <ul class="clean">
-      <li data-r style="--d:2">Used only for model development and validation in this project.</li>
-      <li data-r style="--d:3">No redistribution of any non-public dataset without your written permission.</li>
-      <li data-r style="--d:4">Every study cited clearly, in any output.</li>
-    </ul>
-    <ul class="clean">
-      <li data-r style="--d:5">A written summary of results and validation performance sent to you, whether or not the outcome is positive.</li>
-      <li data-r style="--d:6">Co-authorship or acknowledgement, whichever you consider appropriate for the contribution.</li>
-      <li data-r style="--d:7">If you prefer a formal data sharing agreement, I will follow whatever your institute requires.</li>
-    </ul>
-  </div>
+<section class="slide dark">
+  <div class="eyebrow" data-r style="--d:0">Repository map</div>
+  <h2 data-r style="--d:1">Structured so a reviewer can find anything in one look</h2>
+  <div class="codeblock" data-r style="--d:2"><b>src/biochar_ad_twin/</b>   installable modelling and reporting package
+<b>tests/</b>                 unit and end-to-end workflow tests
+<b>data/experimental/</b>     redistributable, provenance-documented inputs
+<b>scripts/</b>               deterministic ingestion and analysis entry points
+<b>results/</b>               reproducible reference outputs and interpretation
+<b>presentation/</b>         this deck
+<b>docs/</b>                  architecture map, project status and validation roadmap</div>
+  <p class="sub" data-r style="--d:3">Private author-shared inputs and their derived outputs are excluded through <span class="fill">.gitignore</span> and never published &mdash; <span class="fill">data/private/</span> and <span class="fill">results/private/</span> stay off the repository entirely.</p>
 </section>
 
 <!-- 11 ................................................ -->
-<section class="slide dark">
-  <div class="eyebrow" data-r style="--d:0">Next steps</div>
-  <h2 data-r style="--d:1">Three things I would like to agree today</h2>
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Roadmap</div>
+  <h2 data-r style="--d:1">The next validation gate</h2>
   <ol class="numlist">
-    <li data-r style="--d:2"><div><p>Which of your studies are the best fit for this dataset.</p></div></li>
-    <li data-r style="--d:3"><div><p>Whether the time-resolved data behind them can be shared, and in what form.</p></div></li>
-    <li data-r style="--d:4"><div><p>Whether a longer collaboration, a research visit or a doctoral project in your group would be of interest.</p></div></li>
+    <li data-r style="--d:2"><div><p>Reactor-level methane or biogas trajectories.</p><small>Not summary endpoints &mdash; the kinetic parameters need real curves.</small></div></li>
+    <li data-r style="--d:3"><div><p>At least three biochar doses and more than one temperature.</p><small>The current open benchmark has one of each; the dose&ndash;temperature hypothesis needs a range.</small></div></li>
+    <li data-r style="--d:4"><div><p>Biological or reactor replicates, plus inoculum-only controls.</p><small>To separate real treatment effects from batch-to-batch scatter.</small></div></li>
+    <li data-r style="--d:5"><div><p>Substrate, inoculum, S/I ratio, reactor and material metadata.</p><small>The confounders that make cross-study comparison meaningful instead of misleading.</small></div></li>
+    <li data-r style="--d:6"><div><p>A preregistered held-out-study comparison against parsimonious baselines.</p><small>So the model can fail publicly, not just succeed quietly.</small></div></li>
   </ol>
-  <p class="sub" data-r style="--d:5">Thank you for the time. Questions are welcome at any point.<br>
-  <span style="font-family:var(--mono);font-size:13px">nikan.haghighatjoo@gmail.com</span></p>
+</section>
+
+<!-- 12 ................................................ -->
+<section class="slide dark">
+  <div class="eyebrow" data-r style="--d:0">Why it matters</div>
+  <h2 data-r style="--d:1">A framework built to be proven wrong, not just published</h2>
+  <p class="lead" data-r style="--d:2">If the dose&ndash;temperature hypothesis survives independent, multi-condition reactor data, the same framework can guide which material and dose is worth testing before anyone runs a batch. If it does not survive, that negative result is written into the repository, not hidden by it &mdash; and it still tells the field what its data can and cannot support.</p>
+  <div class="note" data-r style="--d:3">Ongoing conversations, including with Dr. Benedikt H&uuml;lsemann at the University of Hohenheim, are aimed at closing exactly this data gap.</div>
+</section>
+
+<!-- 13 ................................................ -->
+<section class="slide">
+  <div class="eyebrow" data-r style="--d:0">Take-aways</div>
+  <h2 data-r style="--d:1">Three things worth remembering</h2>
+  <ol class="numlist">
+    <li data-r style="--d:2"><div><p>It is a reproducible, tested software pipeline today &mdash; not a validated causal model of biochar effects yet.</p></div></li>
+    <li data-r style="--d:3"><div><p>Every claim is scoped to its evidence, in the open, and re-checked on every change.</p></div></li>
+    <li data-r style="--d:4"><div><p>What it needs next is independent, multi-dose, multi-temperature reactor data with intact replicates.</p></div></li>
+  </ol>
+  <p class="sub" data-r style="--d:5">Thank you. The repository, including this deck, is public and open to review.<br>
+  <span style="font-family:var(--mono);font-size:13px">github.com/thisisnikan/biochar-ad-digital-twin &middot; nikan.haghighatjoo@gmail.com</span></p>
 </section>
 
 </div>
 
 <div class="rail"><span id="railfill"></span></div>
 <div class="nav">
-  <span class="count" id="count">01 / 11</span>
+  <span class="count" id="count">01 / 13</span>
   <button id="prev" aria-label="Previous slide">&#8592;</button>
   <button id="next" aria-label="Next slide">&#8594;</button>
 </div>
