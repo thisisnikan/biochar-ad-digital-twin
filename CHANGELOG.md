@@ -5,6 +5,9 @@ release model while the public API remains experimental.
 
 ## Unreleased
 
+- Added an independent dose-response challenge against Valentin & Białowiec (2024): the
+  digital twin's log-quadratic dose response is not supported over this external dose range,
+  where a simpler log-linear form has lower held-out error.
 - Improved repository navigation, contribution guidance and scientific-status reporting.
 - Added `docs/ARCHITECTURE.md`, a plain-language map and glossary for readers new to
   biomethane potential (BMP) modelling.
