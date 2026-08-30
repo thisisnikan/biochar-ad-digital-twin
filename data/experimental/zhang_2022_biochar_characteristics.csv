@@ -1,0 +1,6 @@
+treatment,pyrolysis_temperature_c,pyrolysis_duration_min,surface_o_c_ratio_xps,o_c_o_percent,c_o_percent,c_oh_percent,total_c_o_bonds_percent,raman_id_ig_ratio,data_origin,source_doi,source_url
+biochar_550c_60min,550,60,0.371009,0.293377,0.048592,0.029040,0.371009,0.65,published_article_table_and_text,10.1007/s42773-022-00187-6,https://link.springer.com/article/10.1007/s42773-022-00187-6
+biochar_650c_60min,650,60,0.390126,0.363712,0.051379,0.038134,0.453225,0.72,published_article_table_and_text,10.1007/s42773-022-00187-6,https://link.springer.com/article/10.1007/s42773-022-00187-6
+biochar_750c_60min,750,60,0.412307,0.295410,0.049432,0.051003,0.395845,0.77,published_article_table_and_text,10.1007/s42773-022-00187-6,https://link.springer.com/article/10.1007/s42773-022-00187-6
+biochar_850c_60min,850,60,0.395845,0.326351,0.042260,0.043695,0.412307,0.79,published_article_table_and_text,10.1007/s42773-022-00187-6,https://link.springer.com/article/10.1007/s42773-022-00187-6
+biochar_950c_60min,950,60,0.383911,0.302092,0.039045,0.042774,0.383911,0.80,published_article_table_and_text,10.1007/s42773-022-00187-6,https://link.springer.com/article/10.1007/s42773-022-00187-6

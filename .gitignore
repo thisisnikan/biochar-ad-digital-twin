@@ -8,4 +8,5 @@ build/
 *.egg-info/
 outputs/*
 !outputs/.gitkeep
-
+data/private/
+results/private/

@@ -1,11 +1,32 @@
 # Biochar–AD Digital Twin
 
 [![CI](https://github.com/thisisnikan/biochar-ad-digital-twin/actions/workflows/ci.yml/badge.svg)](https://github.com/thisisnikan/biochar-ad-digital-twin/actions)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-1B3FC4)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-1B3FC4)](LICENSE)
+[![Scientific status: research prototype](https://img.shields.io/badge/status-research%20prototype-B06A22)](docs/PROJECT_STATUS.md)
 
 A reproducible Python workflow for analysing batch biomethane potential (BMP)
 experiments with biochar amendment. It fits all dose–temperature conditions
 simultaneously, quantifies goodness of fit, and estimates parameter uncertainty
 with a batch-aware residual bootstrap.
+
+**New to this project? Start with the map:** [Architecture and glossary](docs/ARCHITECTURE.md)
+explains the idea, the repository layout and the code path in plain language.
+
+**Then:** [Scientific status](docs/PROJECT_STATUS.md) ·
+[Data provenance](data/README.md) · [Reproducible results](results/README.md) ·
+[Presentation](presentation/README.md) · [Contributing](CONTRIBUTING.md)
+
+## Current evidence at a glance
+
+| Evidence layer | Dataset | What it supports | What it does not support |
+| --- | --- | --- | --- |
+| Software demonstration | Labelled synthetic BMP curves | End-to-end fitting, uncertainty and held-out-batch workflow | Scientific validation |
+| Reactor-level benchmark | Kozłowski et al. (2025), 12 trajectories | Reproducible kinetic-family comparison | A universal biochar mechanism |
+| Author-shared summary analysis | Zhang et al. (2022), treatment means and SDs | Kinetic/VFA analysis with explicit limitations | Replicate-held-out validation or new significance tests |
+
+The exact readiness assessment, limitations and next validation gate are maintained in
+[`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md).
 
 ## Research question and falsifiable hypothesis
 
@@ -115,6 +136,21 @@ time series are available only on request. The published lag estimate also
 changes from 0.76 to 0.10 days across doses, exposing a second limitation: the
 current digital twin assumes one dose-invariant lag parameter.
 
+## Author-shared summary-data integration
+
+An author-shared Zhang et al. (2022) workbook adds a complementary experiment:
+wood-waste biochars produced at 550–950 °C and at 30–120 min residence times,
+tested at 10 g/L in 37 °C food-waste batch digestion. It contains consolidated
+cumulative methane, pH, and individual VFA means with reported standard
+deviations.
+
+The original reactor-level triplicates were lost, and the shared methane curves
+are already inoculum-blank corrected. The repository therefore provides a
+hash-verified private ingestion script without publishing the workbook or
+pretending that summary statistics are independent reactor trajectories. Public
+biochar descriptors from the CC BY 4.0 article are included with exact
+provenance. See `data/README.md` for the access boundary and rebuild command.
+
 To fit an experimental dataset:
 
 ```bash
@@ -124,6 +160,13 @@ biochar-ad fit path/to/bmp_data.csv --output outputs
 Required columns are `batch_id`, `time_days`, `dose_g_l`, `temperature_c`, and
 `methane_ml_g_vs`.
 
+## Presentation
+
+An animated, single-file HTML deck at [`presentation/index.html`](presentation/index.html)
+walks through the whole idea end to end: the problem, the research question, the modelling
+pipeline, the evidence assembled, an honest status readout, and the roadmap. See the
+[presentation guide](presentation/README.md) for controls and editing instructions.
+
 ## Quality controls
 
 ```bash
@@ -132,6 +175,24 @@ pytest -q
 ```
 
 GitHub Actions runs both checks on Python 3.10 and 3.12.
+
+## Repository map
+
+```text
+src/biochar_ad_twin/   installable modelling and reporting package
+tests/                 unit and end-to-end workflow tests
+data/experimental/     redistributable, provenance-documented inputs
+scripts/               deterministic ingestion and analysis entry points
+results/               reproducible reference outputs and interpretation
+presentation/          animated project-overview deck
+docs/                  architecture map, project status, scope and validation roadmap
+```
+
+For a longer, beginner-friendly walkthrough of what each part does and how a run flows
+between them, see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+Private author-shared inputs and their derived private outputs are intentionally excluded
+through `.gitignore`; see [`data/README.md`](data/README.md) for the access boundary.
 
 ## Responsible use and next validation step
 
