@@ -5,6 +5,9 @@ release model while the public API remains experimental.
 
 ## Unreleased
 
+- Reworked the presentation deck to chart the actual committed results (Kozłowski 2025
+  kinetic-baseline comparison and the Valentin & Białowiec 2024 dose-response challenge)
+  instead of illustrative figures, so the deck argues from data.
 - Added an independent dose-response challenge against Valentin & Białowiec (2024): the
   digital twin's log-quadratic dose response is not supported over this external dose range,
   where a simpler log-linear form has lower held-out error.
