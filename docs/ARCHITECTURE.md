@@ -55,6 +55,7 @@ tests/                   automated tests, one file per module below
 data/experimental/       small, redistributable, provenance-documented input datasets
 data/private/            NOT in this repository — author-shared inputs stay off GitHub
 scripts/                 standalone scripts that build/ingest datasets from their sources
+03_identifiability/      cross-study identifiability audit: study metadata manifest and criteria
 results/                 committed, reproducible output tables and their interpretation
 results/private/         NOT in this repository — outputs derived from private data
 presentation/            the animated project-overview slide deck (index.html)
@@ -144,6 +145,7 @@ autocorrelated.
 | `report.py` | Writing JSON/PNG output artifacts | `tests/test_workflow.py` |
 | `cli.py` | Argument parsing and wiring the pieces above together | `tests/test_workflow.py` |
 | Zhang 2022 ingestion (`scripts/`) | Private-data ingestion and summary analysis | `tests/test_zhang_2022_ingestion.py`, `tests/test_zhang_2022_analysis.py` |
+| `identifiability.py` | Cross-study overlap and additive design-matrix estimability audit (`audit-identifiability`) | `tests/test_identifiability.py` |
 
 ## Where to go next
 

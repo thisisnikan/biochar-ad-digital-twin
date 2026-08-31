@@ -15,6 +15,7 @@ explains the idea, the repository layout and the code path in plain language.
 
 **Then:** [Scientific status](docs/PROJECT_STATUS.md) ·
 [Data provenance](data/README.md) · [Reproducible results](results/README.md) ·
+[Cross-study identifiability](03_identifiability/README.md) ·
 [Presentation](presentation/README.md) · [Contributing](CONTRIBUTING.md)
 
 ## Current evidence at a glance
@@ -136,6 +137,27 @@ time series are available only on request. The published lag estimate also
 changes from 0.76 to 0.10 days across doses, exposing a second limitation: the
 current digital twin assumes one dose-invariant lag parameter.
 
+## Cross-study identifiability gate
+
+Before fitting laboratory- and inoculum-level effects, the repository audits
+whether the included studies contain enough overlap to distinguish them — and,
+just as importantly, *what kind* of overlap is missing:
+
+```bash
+biochar-ad audit-identifiability
+```
+
+The present three-study lab-inoculum graph has two connected components (nested
+within the Wroclaw lab, disconnected from the Fudan/Zhang study), so laboratory
+and inoculum effects are not yet jointly estimable even under an explicit
+additivity assumption — a stronger statement than "not crossed". A connected but
+acyclic design *can* support additive estimation under that assumption; it just
+cannot test the assumption itself without crossed evidence. This is a targeted
+data-design finding — not a rejection of the average biochar effect or of the
+Digital Twin roadmap. See [`03_identifiability/`](03_identifiability/README.md)
+for the exact criteria, the additive design-matrix rank diagnostic, and the
+minimum ring-trial design that would close this gap.
+
 ## Author-shared summary-data integration
 
 An author-shared Zhang et al. (2022) workbook adds a complementary experiment:
@@ -183,6 +205,7 @@ src/biochar_ad_twin/   installable modelling and reporting package
 tests/                 unit and end-to-end workflow tests
 data/experimental/     redistributable, provenance-documented inputs
 scripts/               deterministic ingestion and analysis entry points
+03_identifiability/    cross-study identifiability audit and study metadata manifest
 results/               reproducible reference outputs and interpretation
 presentation/          animated project-overview deck
 docs/                  architecture map, project status, scope and validation roadmap

@@ -5,6 +5,16 @@ release model while the public API remains experimental.
 
 ## Unreleased
 
+- Added a cross-study identifiability audit (`03_identifiability/`, `biochar-ad
+  audit-identifiability`): a source-linked study metadata manifest, deterministic
+  bipartite-overlap and additive design-matrix-rank diagnostics, and a plain-language
+  explanation of why a connected acyclic (nested) design can support additive
+  estimation under an explicit assumption while a disconnected design is structurally
+  confounded regardless of assumptions. Current result: the three included studies'
+  lab-inoculum design is not yet jointly estimable even under additivity, which is a
+  data-design finding, not a rejection of the average biochar effect.
+- Fixed a lint-only regression in `tests/test_zhang_2022_analysis.py` (a stray
+  module-level `import pytest` at end of file) so `ruff check .` passes again.
 - Reworked the presentation deck to chart the actual committed results (Kozłowski 2025
   kinetic-baseline comparison and the Valentin & Białowiec 2024 dose-response challenge)
   instead of illustrative figures, so the deck argues from data.

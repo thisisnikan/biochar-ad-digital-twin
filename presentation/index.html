@@ -277,7 +277,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
 <!-- 5 ................................................. -->
 <section class="slide">
   <div class="eyebrow" data-r style="--d:0">What is built</div>
-  <h2 data-r style="--d:1">One CLI, four reproducible checks</h2>
+  <h2 data-r style="--d:1">One CLI, five reproducible checks</h2>
   <div class="pipe">
     <div class="node" data-r style="--d:2">
       <div class="n">DEMO</div>
@@ -299,8 +299,13 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
       <h3>Independent challenge</h3>
       <p>Tests this project's own dose-response shape against an external published dataset. Real result two slides from now.</p>
     </div>
+    <div class="node" data-r style="--d:6">
+      <div class="n">AUDIT-IDENTIFIABILITY</div>
+      <h3>Study-design check</h3>
+      <p>Audits whether the included studies' lab, inoculum, substrate and biochar overlap can support cross-study estimation, before any hierarchical model is fit.</p>
+    </div>
   </div>
-  <div class="note" data-r style="--d:6">18 automated tests and <span class="fill">ruff check .</span> run on every change, on Python 3.10 and 3.12.</div>
+  <div class="note" data-r style="--d:7">27 automated tests and <span class="fill">ruff check .</span> run on every change, on Python 3.10 and 3.12.</div>
 </section>
 
 <!-- 6 ................................................. -->
@@ -463,8 +468,8 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
   <div class="eyebrow" data-r style="--d:0">Reproducibility</div>
   <h2 data-r style="--d:1">Every chart in this deck is one command away</h2>
   <div class="kpi">
-    <div data-r style="--d:2"><span>18</span><small>automated tests</small></div>
-    <div data-r style="--d:3"><span>4</span><small>CLI commands</small></div>
+    <div data-r style="--d:2"><span>27</span><small>automated tests</small></div>
+    <div data-r style="--d:3"><span>5</span><small>CLI commands</small></div>
     <div data-r style="--d:4"><span>0</span><small>lint errors tolerated</small></div>
   </div>
   <ul class="clean" style="margin-top:clamp(20px,3.4vh,36px)">
@@ -485,6 +490,7 @@ ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:11px;hei
     <li data-r style="--d:5"><div><p>Substrate, inoculum, S/I ratio, reactor and material metadata.</p><small>The confounders that make cross-study comparison meaningful instead of misleading.</small></div></li>
     <li data-r style="--d:6"><div><p>A preregistered held-out-study comparison against parsimonious baselines.</p><small>So the model can fail publicly, not just succeed quietly &mdash; as it just did on dose response.</small></div></li>
   </ol>
+  <div class="note" data-r style="--d:7">A narrower, prior gate: separating a laboratory effect from an inoculum effect needs a ring trial that reuses one characterized inoculum across labs. <span class="fill">biochar-ad audit-identifiability</span> shows this is not yet possible with the three included studies &mdash; see <span class="fill">03_identifiability/</span>.</div>
 </section>
 
 <!-- 12 ................................................ -->
