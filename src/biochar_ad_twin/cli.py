@@ -12,6 +12,7 @@ from .baselines import compare_experimental_baselines
 from .data import generate_demo_dataset
 from .external_validation import compare_external_dose_responses
 from .fit import bootstrap_parameters, fit_global
+from .identifiability import write_audit
 from .report import save_report
 
 
@@ -46,11 +47,43 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("data/experimental/valentin_bialowiec_2024_parameters.csv"),
     )
     external.add_argument("--output", type=Path, default=Path("outputs/external-dose"))
+    identifiability = commands.add_parser(
+        "audit-identifiability",
+        help="Audit cross-study factor overlap before hierarchical modelling",
+    )
+    identifiability.add_argument(
+        "csv", type=Path, nargs="?", default=Path("03_identifiability/study_metadata.csv")
+    )
+    identifiability.add_argument(
+        "--output", type=Path, default=Path("results/identifiability")
+    )
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
+    if args.command == "audit-identifiability":
+        summary = write_audit(args.csv, args.output)
+        lab_inoculum = summary.loc[
+            (summary["left_factor"] == "lab_id")
+            & (summary["right_factor"] == "inoculum_id")
+        ].iloc[0]
+        print(
+            json.dumps(
+                {
+                    "manifest": str(args.csv),
+                    "lab_inoculum_crossed_overlap": bool(lab_inoculum["crossed_overlap"]),
+                    "conclusion": lab_inoculum["conclusion"],
+                    "next_gate": (
+                        "hierarchical_model_candidate"
+                        if lab_inoculum["crossed_overlap"]
+                        else "targeted_cross_lab_data_needed"
+                    ),
+                },
+                indent=2,
+            )
+        )
+        return
     if args.command == "benchmark-external-dose":
         frame = pd.read_csv(args.csv)
         comparison = compare_external_dose_responses(frame)

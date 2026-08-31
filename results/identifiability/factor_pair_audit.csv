@@ -1,0 +1,4 @@
+left_factor,right_factor,studies,unique_edges,left_levels,right_levels,connected_components,cycle_rank,left_levels_shared_across_right,right_levels_shared_across_left,crossed_overlap,conclusion
+lab_id,inoculum_id,3,3,2,3,2,0,1,0,False,nested_or_acyclic_overlap_only
+inoculum_id,substrate_id,3,3,3,3,3,0,0,0,False,fully_aliased_or_disconnected
+inoculum_id,biochar_family_id,3,3,3,3,3,0,0,0,False,fully_aliased_or_disconnected

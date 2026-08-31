@@ -15,6 +15,7 @@ explains the idea, the repository layout and the code path in plain language.
 
 **Then:** [Scientific status](docs/PROJECT_STATUS.md) ·
 [Data provenance](data/README.md) · [Reproducible results](results/README.md) ·
+[Cross-study identifiability](03_identifiability/README.md) ·
 [Presentation](presentation/README.md) · [Contributing](CONTRIBUTING.md)
 
 ## Current evidence at a glance
@@ -135,6 +136,23 @@ challenge, not full trajectory validation: the paper's raw triplicate reactor
 time series are available only on request. The published lag estimate also
 changes from 0.76 to 0.10 days across doses, exposing a second limitation: the
 current digital twin assumes one dose-invariant lag parameter.
+
+## Cross-study identifiability gate
+
+Before fitting laboratory- and inoculum-level effects, the repository now audits
+whether the included studies contain enough crossed overlap to distinguish them:
+
+```bash
+biochar-ad audit-identifiability
+```
+
+The present three-study graph is nested/acyclic: one laboratory contributes two
+reported inoculum collections, but no inoculum is documented across laboratories.
+Laboratory and inoculum effects therefore cannot yet be separated without strong
+assumptions. This is a targeted data-design finding—not a rejection of the average
+biochar effect or of the Digital Twin roadmap. See
+[`03_identifiability/`](03_identifiability/README.md) for the exact criterion and
+the minimum ring-trial design that would close this gap.
 
 ## Author-shared summary-data integration
 
