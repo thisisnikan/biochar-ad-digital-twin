@@ -34,3 +34,22 @@ maximum production rate. With only five doses, this is a falsification-oriented
 stress test rather than evidence for a universal response law. The current
 dose-invariant lag assumption is also not supported descriptively: published lag
 estimates span 0.10–0.76 days.
+
+## Within-study treatment effects
+
+`effects/within_study_effects.csv` puts the two public outcome datasets on a
+common, dimensionless scale using `log(treatment / same-study control)` for
+modified-Gompertz potential and maximum rate. The rows remain stratified: the
+Kozłowski values come from reactor-level fits and retain between-reactor standard
+deviations, whereas the Valentin values are published condition parameters
+without reported parameter uncertainty. No pooled cross-study estimate is reported.
+
+Within Kozłowski, fitted potential is 4.5–11.9% above the same-study control,
+while fitted maximum rate is 1.6–7.4% lower. The Valentin table shows both
+parameters increasing with dose. The contrast motivates context-aware modelling;
+it does not identify whether material, substrate, dose or another study difference
+caused the disagreement.
+
+```bash
+biochar-ad summarize-effects --output results/effects
+```

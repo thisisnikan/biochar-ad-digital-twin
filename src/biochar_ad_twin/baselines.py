@@ -64,7 +64,8 @@ BASELINES = {
 }
 
 
-def _fit_model(frame: pd.DataFrame, spec: BaselineSpec) -> tuple[np.ndarray, np.ndarray]:
+def fit_baseline(frame: pd.DataFrame, spec: BaselineSpec) -> tuple[np.ndarray, np.ndarray]:
+    """Fit one baseline specification and return parameters and predictions."""
     time = frame["time_days"].to_numpy(float)
     observed = frame["methane_ml_g_vs"].to_numpy(float)
     solution = least_squares(
@@ -110,14 +111,14 @@ def compare_experimental_baselines(frame: pd.DataFrame) -> pd.DataFrame:
             raise ValueError(f"Treatment {treatment} needs at least two valid reactors")
         observed = treatment_frame["methane_ml_g_vs"].to_numpy(float)
         for spec in BASELINES.values():
-            _, fitted = _fit_model(treatment_frame, spec)
+            _, fitted = fit_baseline(treatment_frame, spec)
             residual = observed - fitted
             holdout_rmse = []
             holdout_mae = []
             for held_out in replicas:
                 train = treatment_frame.loc[treatment_frame["replicate"] != held_out]
                 test = treatment_frame.loc[treatment_frame["replicate"] == held_out]
-                parameters, _ = _fit_model(train, spec)
+                parameters, _ = fit_baseline(train, spec)
                 predicted = spec.function(test["time_days"].to_numpy(float), *parameters)
                 errors = test["methane_ml_g_vs"].to_numpy(float) - predicted
                 holdout_rmse.append(float(np.sqrt(np.mean(errors**2))))

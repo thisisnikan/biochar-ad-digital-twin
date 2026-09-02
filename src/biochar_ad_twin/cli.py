@@ -10,6 +10,7 @@ import pandas as pd
 from .analysis import compare_models, leave_one_batch_out
 from .baselines import compare_experimental_baselines
 from .data import generate_demo_dataset
+from .effects import build_within_study_effect_table
 from .external_validation import compare_external_dose_responses
 from .fit import bootstrap_parameters, fit_global
 from .report import save_report
@@ -46,11 +47,45 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("data/experimental/valentin_bialowiec_2024_parameters.csv"),
     )
     external.add_argument("--output", type=Path, default=Path("outputs/external-dose"))
+    effects = commands.add_parser(
+        "summarize-effects",
+        help="Normalize public treatment estimates to controls within each study",
+    )
+    effects.add_argument(
+        "--reactor-csv",
+        type=Path,
+        default=Path("data/experimental/kozlowski_2025_bmp.csv"),
+    )
+    effects.add_argument(
+        "--parameter-csv",
+        type=Path,
+        default=Path("data/experimental/valentin_bialowiec_2024_parameters.csv"),
+    )
+    effects.add_argument("--output", type=Path, default=Path("outputs/effects"))
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
+    if args.command == "summarize-effects":
+        effects = build_within_study_effect_table(
+            pd.read_csv(args.reactor_csv), pd.read_csv(args.parameter_csv)
+        )
+        args.output.mkdir(parents=True, exist_ok=True)
+        destination = args.output / "within_study_effects.csv"
+        effects.to_csv(destination, index=False)
+        print(
+            json.dumps(
+                {
+                    "output": str(destination),
+                    "studies": effects["study_id"].nunique(),
+                    "effects": len(effects),
+                    "cross_study_pooling_performed": False,
+                },
+                indent=2,
+            )
+        )
+        return
     if args.command == "benchmark-external-dose":
         frame = pd.read_csv(args.csv)
         comparison = compare_external_dose_responses(frame)
