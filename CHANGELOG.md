@@ -5,12 +5,6 @@ release model while the public API remains experimental.
 
 ## Unreleased
 
-- Added CC BY 4.0 García Prats et al. (2024) biochar descriptors, material context and
-  treatment-design tables, plus a reproducible coverage/boundary audit.
-- Added a metadata-only intake gate for the unpublished García Prats 2025 study; no
-  author-shared document, table value or numeric derivative is redistributed.
-- Documented the future same-batch treatment-effect formulation and the requirement to
-  separate dose from collection/experimental batch before descriptor modelling.
 - Reworked the presentation deck to chart the actual committed results (Kozłowski 2025
   kinetic-baseline comparison and the Valentin & Białowiec 2024 dose-response challenge)
   instead of illustrative figures, so the deck argues from data.

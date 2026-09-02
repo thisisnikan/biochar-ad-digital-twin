@@ -53,7 +53,6 @@ the current answer to "how validated is this, exactly?".
 src/biochar_ad_twin/     the installable Python package (the actual model and workflow)
 tests/                   automated tests, one file per module below
 data/experimental/       small, redistributable, provenance-documented input datasets
-data/pending/            public intake metadata and schemas, never unpublished values
 data/private/            NOT in this repository — author-shared inputs stay off GitHub
 scripts/                 standalone scripts that build/ingest datasets from their sources
 results/                 committed, reproducible output tables and their interpretation
@@ -63,18 +62,20 @@ docs/                    this map, plus the honest project-status page
 outputs/                 default local scratch folder for `biochar-ad` command output (git-ignored)
 ```
 
-**Why `data/private/` and `results/private/` do not exist here:** author-shared inputs may
-be used for research without being cleared for public redistribution. The repository is
-built so that analysis code and intake contracts are public and auditable while private
-source files — and numeric derivatives that would disclose them — never leave the
-contributor's machine. `.gitignore` enforces this as a second line of defence; see
-[`../data/README.md`](../data/README.md) for the exact boundary. Openly licensed source
-tables and reproducible results derived from public measurements can be committed.
+**Why `data/private/` and `results/private/` do not exist here:** one dataset behind this
+project (Zhang et al., 2022) was shared by its authors for research use, not for public
+redistribution. The repository is built so that the *analysis code* is public and
+auditable while the *private spreadsheet itself* — and anything derived straight from it —
+never leaves the contributor's machine. `.gitignore` enforces this as a second line of
+defence; see [`../data/README.md`](../data/README.md) for the exact boundary. Public,
+openly licensed data (Kozłowski et al., 2025) and every reproducible *result* derived from
+it are committed and public, which is what "keep the data private, keep the results
+public" means in practice here.
 
 ## How a run actually flows
 
 Everything is reached through one console command, `biochar-ad`, defined in
-`src/biochar_ad_twin/cli.py`. There are four subcommands:
+`src/biochar_ad_twin/cli.py`. There are three subcommands:
 
 ```mermaid
 flowchart LR
@@ -82,7 +83,6 @@ flowchart LR
         demo["demo"]
         fit["fit &lt;csv&gt;"]
         bench["benchmark-experimental"]
-        external["benchmark-external-dose"]
     end
 
     demo --> gen["data.py<br/>generate_demo_dataset()"]
@@ -97,8 +97,6 @@ flowchart LR
 
     bench --> baselines["baselines.py<br/>compare_experimental_baselines()<br/>per-treatment curve family comparison"]
     baselines --> out2["outputs/experimental/<br/>kinetic_baseline_comparison.csv"]
-    external --> dosecheck["external_validation.py<br/>leave-one-dose-out comparison"]
-    dosecheck --> out3["outputs/external-dose/<br/>dose_response_comparison.csv"]
 
     report --> out1["outputs/<br/>fit_summary.json, fitted_curves.png,<br/>model_comparison.csv, leave_one_batch_out.csv"]
     compare --> out1
@@ -146,7 +144,6 @@ autocorrelated.
 | `report.py` | Writing JSON/PNG output artifacts | `tests/test_workflow.py` |
 | `cli.py` | Argument parsing and wiring the pieces above together | `tests/test_workflow.py` |
 | Zhang 2022 ingestion (`scripts/`) | Private-data ingestion and summary analysis | `tests/test_zhang_2022_ingestion.py`, `tests/test_zhang_2022_analysis.py` |
-| García Prats 2024 design audit (`scripts/`) | Open-table provenance, unit and publication-boundary checks | `tests/test_garcia_prats_2024_data.py` |
 
 ## Where to go next
 

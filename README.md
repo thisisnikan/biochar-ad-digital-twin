@@ -23,7 +23,6 @@ explains the idea, the repository layout and the code path in plain language.
 | --- | --- | --- | --- |
 | Software demonstration | Labelled synthetic BMP curves | End-to-end fitting, uncertainty and held-out-batch workflow | Scientific validation |
 | Reactor-level benchmark | Kozłowski et al. (2025), 12 trajectories | Reproducible kinetic-family comparison | A universal biochar mechanism |
-| Open design and descriptors | García Prats et al. (2024), 3 biochars × 3 doses | Material-aware schema and experimental coverage | Outcome modelling without exact trajectories |
 | Author-shared summary analysis | Zhang et al. (2022), treatment means and SDs | Kinetic/VFA analysis with explicit limitations | Replicate-held-out validation or new significance tests |
 
 The exact readiness assessment, limitations and next validation gate are maintained in
@@ -152,26 +151,6 @@ pretending that summary statistics are independent reactor trajectories. Public
 biochar descriptors from the CC BY 4.0 article are included with exact
 provenance. See `data/README.md` for the access boundary and rebuild command.
 
-## García Prats data integration
-
-Three CC BY 4.0 tables derived from García Prats et al. (2024) now capture exact
-biochar characteristics, substrate/inoculum context and the 12-condition triplicate
-experimental design. Reproduce the design audit with:
-
-```bash
-python scripts/summarize_garcia_prats_2024_design.py
-```
-
-The public result confirms coverage of three biochars and three doses but contains
-no methane values. Exact reactor trajectories were not received, and the paper's
-abstract and results narrative report inconsistent relative-effect percentages, so
-the repository does not choose one prose value or digitize plotted means.
-
-The related 2025 full paper is under revision. Its author-shared conference abstract
-has no documented redistribution permission, so only a metadata-only intake gate is
-public. See [the integration note](docs/GARCIA_PRATS_INTEGRATION.md) for the data
-boundary, required raw schema and planned same-batch treatment-effect analysis.
-
 To fit an experimental dataset:
 
 ```bash
@@ -203,7 +182,6 @@ GitHub Actions runs both checks on Python 3.10 and 3.12.
 src/biochar_ad_twin/   installable modelling and reporting package
 tests/                 unit and end-to-end workflow tests
 data/experimental/     redistributable, provenance-documented inputs
-data/pending/          metadata-only intake gates; no private numeric content
 scripts/               deterministic ingestion and analysis entry points
 results/               reproducible reference outputs and interpretation
 presentation/          animated project-overview deck

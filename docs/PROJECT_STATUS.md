@@ -1,17 +1,15 @@
 # Project status
 
-Last reviewed: 2 September 2026
+Last reviewed: 30 August 2026
 
 ## Readiness snapshot
 
 | Area | Status | Evidence |
 | --- | --- | --- |
 | Package and CLI | Working | Installable package with `demo`, `fit`, `benchmark-experimental`, and `benchmark-external-dose` commands |
-| Automated quality | Working | Ruff plus 22 tests on Python 3.10 and 3.12 in GitHub Actions |
+| Automated quality | Working | Ruff plus 18 tests on Python 3.10 and 3.12 in GitHub Actions |
 | Synthetic workflow | Reproducible | Labelled synthetic input and deterministic reporting pipeline |
 | Open experimental benchmark | Reproducible | Kozłowski et al. (2025) reactor-level trajectories and reference output |
-| García Prats 2024 integration | Design-ready, outcome-limited | Open characteristics, context and treatment design; no exact reactor trajectories |
-| García Prats 2025 intake | Waiting for raw data and permission | Metadata-only gate; unpublished abstract and numeric derivatives are not committed |
 | Zhang integration | Limited by source | Hash-verified private ingestion and summary analysis; original triplicates were lost |
 | Independent dose-response challenge | Falsified as tested | Valentin & Białowiec (2024) external table: log-linear beats the twin's log-quadratic form on leave-one-dose-out RMSE |
 | Global dose–temperature hypothesis | Not independently validated | Requires multi-dose, multi-temperature reactor trajectories; the dose-response *form* is now externally challenged (see above) |
@@ -26,8 +24,6 @@ Last reviewed: 2 September 2026
 - An independent 2024 glucose BMP dataset (Valentin & Białowiec) was used to stress-test the
   digital twin's log-quadratic dose-response form against simpler alternatives, and the
   repository reports the negative result rather than hiding it.
-- The García Prats et al. (2024) material and experimental design can be integrated
-  reproducibly without presenting prose summaries or digitized plots as raw outcomes.
 
 ## What cannot be claimed now
 
@@ -39,9 +35,6 @@ Last reviewed: 2 September 2026
 - That an external kinetic-parameter table validates full reactor trajectories — it is a
   parameter-level challenge only; the paper's raw reactor time series were not obtained.
 - That summary-curve residuals replace biological replicate uncertainty.
-- That García Prats et al. (2024) descriptor coverage validates a material-property
-  response model; exact outcomes and reactor identities are still absent.
-- That the author-shared García Prats 2025 abstract is a redistributable dataset.
 - That this research prototype is already an operational plant digital twin.
 
 ## Next validation gate
@@ -61,11 +54,6 @@ with intact replicates is still required.
 
 Until that gate is passed, the repository should be described as a **reproducible research
 prototype for falsifiable kinetic modelling**, not as a validated predictive product.
-
-For the pending García Prats study, the first permissible analysis after raw delivery is
-same-batch treatment-versus-control estimation. Dose must not stand in for collection or
-experimental batch; descriptor models then require leave-one-material and leave-one-study
-validation. See [`GARCIA_PRATS_INTEGRATION.md`](GARCIA_PRATS_INTEGRATION.md).
 
 ## Maintenance checklist
 

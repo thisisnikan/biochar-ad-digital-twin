@@ -34,16 +34,3 @@ maximum production rate. With only five doses, this is a falsification-oriented
 stress test rather than evidence for a universal response law. The current
 dose-invariant lag assumption is also not supported descriptively: published lag
 estimates span 0.10–0.76 days.
-
-## García Prats 2024 design coverage
-
-`garcia_prats_2024/design_summary.csv` is generated with:
-
-```bash
-python scripts/summarize_garcia_prats_2024_design.py
-```
-
-It audits 3 characterized biochars, 12 triplicate first-assay conditions, 9 amended
-conditions and 3 dose levels. It intentionally reports zero public outcome
-measurements and zero received reactor trajectories. This output shows what the open
-design can support; it is not a kinetic fit or evidence of biochar efficacy.
