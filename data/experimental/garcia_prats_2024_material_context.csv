@@ -1,0 +1,4 @@
+sample_id,sample_role,density_g_l,density_sd_g_l,total_solids_g_l,total_solids_sd_g_l,volatile_solids_g_l,volatile_solids_sd_g_l,ph,data_origin,source_doi,source_url,license
+OFMSW_S1,substrate,967,15,33.3,0.8,22.0,0.7,5.52,published_article_table_2,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+OFMSW_S2,substrate,967,17,31,2,21,2,5.50,published_article_table_2,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+INOCULUM,inoculum,953,12,14.2,0.5,6.4,0.2,7.96,published_article_table_2,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0

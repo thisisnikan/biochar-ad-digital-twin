@@ -1,0 +1,14 @@
+metric,value,unit
+characterized_biochars,3.0,count
+material_context_records,3.0,count
+first_assay_conditions,12.0,count
+biochar_amended_conditions,9.0,count
+expected_first_assay_bottles,36.0,count
+biochar_dose_levels,3.0,count
+minimum_amended_nominal_dose,0.16,g/L
+maximum_amended_nominal_dose,1.613333,g/L
+digestion_temperature,37.0,degC
+first_assay_duration,22.0,days
+second_feeding_selected_conditions,7.0,count
+public_outcome_measurements_committed,0.0,count
+raw_reactor_trajectories_received,0.0,boolean

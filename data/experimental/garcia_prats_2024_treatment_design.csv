@@ -1,0 +1,13 @@
+condition_id,condition_type,substrate,biochar_id,dose_pct_ts,biochar_mass_mg,working_volume_ml,nominal_dose_g_l,n_replicates,temperature_c,assay_1_duration_days,selected_for_second_feeding,data_origin,source_doi,source_url,license
+blank,inoculum_blank,none,,0,0,150,0,3,37,22,false,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+cellulose,positive_control,cellulose,,0,0,150,0,3,37,22,false,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+control,unamended_control,OFMSW,,0,0,150,0,3,37,22,true,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+bc1_1pct,biochar_amended,OFMSW,BC1,1,24,150,0.160000,3,37,22,false,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+bc1_5pct,biochar_amended,OFMSW,BC1,5,121,150,0.806667,3,37,22,false,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+bc1_10pct,biochar_amended,OFMSW,BC1,10,242,150,1.613333,3,37,22,false,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+bc2_1pct,biochar_amended,OFMSW,BC2,1,24,150,0.160000,3,37,22,true,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+bc2_5pct,biochar_amended,OFMSW,BC2,5,121,150,0.806667,3,37,22,true,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+bc2_10pct,biochar_amended,OFMSW,BC2,10,242,150,1.613333,3,37,22,true,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+bc3_1pct,biochar_amended,OFMSW,BC3,1,24,150,0.160000,3,37,22,true,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+bc3_5pct,biochar_amended,OFMSW,BC3,5,121,150,0.806667,3,37,22,true,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+bc3_10pct,biochar_amended,OFMSW,BC3,10,242,150,1.613333,3,37,22,true,published_article_methods,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0

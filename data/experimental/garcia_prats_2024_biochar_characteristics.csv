@@ -1,0 +1,4 @@
+biochar_id,manufacturer,manufacturer_country,feedstock,pyrolysis_temperature_c,bulk_density_kg_m3,manufacturer_toc_pct,manufacturer_toc_sd_pct,manufacturer_ph,manufacturer_ec_us_cm,bet_surface_area_m2_g,mean_pore_size_nm,chns_c_pct,chns_h_pct,chns_n_pct,chns_s_pct_upper_bound,chns_s_censored,data_origin,source_doi,source_url,license
+BC1,Soler,France,softwood_maritime_pine,450,221,80,2,7.4,72,6.04,4.73,71.49,2.72,0.28,0.1,true,published_article_tables_1_and_3,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+BC2,Novocarbo,Germany,wood_residues,700,348,81.3,0.1,8.7,,7.78,6.40,77.42,2.41,0.70,0.1,true,published_article_tables_1_and_3,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
+BC3,Soler,France,hardwood_beech_and_oak,450,380,78,2,7.5,122,9.78,10.39,74.40,2.78,0.32,0.1,true,published_article_tables_1_and_3,10.3389/fceng.2024.1384495,https://doi.org/10.3389/fceng.2024.1384495,CC BY 4.0
