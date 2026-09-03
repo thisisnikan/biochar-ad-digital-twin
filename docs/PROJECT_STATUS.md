@@ -1,13 +1,14 @@
 # Project status
 
-Last reviewed: 30 August 2026
+Last reviewed: 3 September 2026
 
 ## Readiness snapshot
 
 | Area | Status | Evidence |
 | --- | --- | --- |
-| Package and CLI | Working | Installable package with `demo`, `fit`, `benchmark-experimental`, and `benchmark-external-dose` commands |
-| Automated quality | Working | Ruff plus 18 tests on Python 3.10 and 3.12 in GitHub Actions |
+| Package and CLI | Working | Installable package with modelling, benchmarking, effect-summary and intake-validation commands |
+| Automated quality | Working | Ruff plus automated tests on Python 3.10 and 3.12 in GitHub Actions |
+| Data contribution gate | Working | Minimum reactor-time-point contract with machine-readable errors and evidence-limit warnings |
 | Synthetic workflow | Reproducible | Labelled synthetic input and deterministic reporting pipeline |
 | Open experimental benchmark | Reproducible | Kozłowski et al. (2025) reactor-level trajectories and reference output |
 | Zhang integration | Limited by source | Hash-verified private ingestion and summary analysis; original triplicates were lost |
@@ -17,6 +18,8 @@ Last reviewed: 30 August 2026
 ## What can be claimed now
 
 - The software executes an auditable end-to-end BMP modelling workflow.
+- Reactor-level contributions can be checked for identity, controls, replicate structure,
+  raw/processed coexistence, QC and row-level provenance before modelling.
 - Modified Gompertz has the lowest mean reactor-held-out RMSE within each treatment of the
   included Kozłowski et al. (2025) experiment.
 - Author-shared Zhang et al. (2022) summaries can be analysed without inventing

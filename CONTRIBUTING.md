@@ -23,5 +23,7 @@ pytest -q
 5. Do not create pseudo-replicates, silently remove observations or overstate causal evidence.
 6. Do not commit private or author-shared data without written redistribution permission.
 
-For a new dataset, use the data-contribution issue form before writing an ingestion script.
-The pull request should include the generated reference result and a cautious interpretation.
+For a new reactor-level dataset, start from `data/templates/reactor_observations.csv`,
+run `biochar-ad validate-intake <csv>`, and use the data-contribution issue form before
+writing an ingestion script. The pull request should include the validation report,
+generated reference result and a cautious interpretation.

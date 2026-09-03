@@ -13,6 +13,7 @@ from .data import generate_demo_dataset
 from .effects import build_within_study_effect_table
 from .external_validation import compare_external_dose_responses
 from .fit import bootstrap_parameters, fit_global
+from .intake import validate_reactor_observations
 from .report import save_report
 
 
@@ -62,11 +63,22 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("data/experimental/valentin_bialowiec_2024_parameters.csv"),
     )
     effects.add_argument("--output", type=Path, default=Path("outputs/effects"))
+    intake = commands.add_parser(
+        "validate-intake",
+        help="Validate a reactor-level contribution before modelling or publication",
+    )
+    intake.add_argument("csv", type=Path)
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
+    if args.command == "validate-intake":
+        report = validate_reactor_observations(pd.read_csv(args.csv))
+        print(json.dumps(report.to_dict(), indent=2))
+        if not report.valid:
+            raise SystemExit(2)
+        return
     if args.command == "summarize-effects":
         effects = build_within_study_effect_table(
             pd.read_csv(args.reactor_csv), pd.read_csv(args.parameter_csv)

@@ -1,0 +1,13 @@
+study_id,experiment_id,reactor_id,treatment_id,replicate_id,time_days,temperature_c,is_control,is_inoculum_blank,substrate_id,inoculum_id,material_id,dose_value,dose_unit,raw_cumulative_methane_ml,blank_corrected_methane_ml_g_vs,qc_include,qc_flags,data_origin,source_record_id
+example_study,run_01,blank_r1,inoculum_blank,1,0,37,true,true,none,inoculum_a,none,0,none,0,,true,,template_example,blank_sheet:A2
+example_study,run_01,blank_r1,inoculum_blank,1,1,37,true,true,none,inoculum_a,none,0,none,2,,true,,template_example,blank_sheet:A3
+example_study,run_01,blank_r2,inoculum_blank,2,0,37,true,true,none,inoculum_a,none,0,none,0,,true,,template_example,blank_sheet:B2
+example_study,run_01,blank_r2,inoculum_blank,2,1,37,true,true,none,inoculum_a,none,0,none,2.1,,true,,template_example,blank_sheet:B3
+example_study,run_01,control_r1,substrate_control,1,0,37,true,false,substrate_a,inoculum_a,none,0,g_l,0,0,true,,template_example,bmp_sheet:B2
+example_study,run_01,control_r1,substrate_control,1,1,37,true,false,substrate_a,inoculum_a,none,0,g_l,22,40,true,,template_example,bmp_sheet:B3
+example_study,run_01,control_r2,substrate_control,2,0,37,true,false,substrate_a,inoculum_a,none,0,g_l,0,0,true,,template_example,bmp_sheet:C2
+example_study,run_01,control_r2,substrate_control,2,1,37,true,false,substrate_a,inoculum_a,none,0,g_l,21,38,true,,template_example,bmp_sheet:C3
+example_study,run_01,biochar_r1,biochar_5_g_l,1,0,37,false,false,substrate_a,inoculum_a,biochar_a,5,g_l,0,0,true,,template_example,bmp_sheet:D2
+example_study,run_01,biochar_r1,biochar_5_g_l,1,1,37,false,false,substrate_a,inoculum_a,biochar_a,5,g_l,27,50,true,,template_example,bmp_sheet:D3
+example_study,run_01,biochar_r2,biochar_5_g_l,2,0,37,false,false,substrate_a,inoculum_a,biochar_a,5,g_l,0,0,true,,template_example,bmp_sheet:E2
+example_study,run_01,biochar_r2,biochar_5_g_l,2,1,37,false,false,substrate_a,inoculum_a,biochar_a,5,g_l,26,48,true,,template_example,bmp_sheet:E3
