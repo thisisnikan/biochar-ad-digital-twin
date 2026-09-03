@@ -1,5 +1,19 @@
 # Experimental data provenance
 
+## Contribution contract
+
+New reactor-level contributions should use
+`templates/reactor_observations.csv` and pass the automated intake gate before an
+ingestion script or model is added:
+
+```bash
+biochar-ad validate-intake data/templates/reactor_observations.csv
+```
+
+See `docs/DATA_CONTRACT.md` for field definitions, validation rules and evidence
+limits. Existing historical datasets keep their source-faithful schemas; they should
+be mapped explicitly rather than silently renamed.
+
 ## Kozłowski et al. (2025)
 
 `experimental/kozlowski_2025_bmp.csv` is a tidy, mechanically derived version of the

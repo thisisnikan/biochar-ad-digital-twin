@@ -14,7 +14,8 @@ with a batch-aware residual bootstrap.
 explains the idea, the repository layout and the code path in plain language.
 
 **Then:** [Scientific status](docs/PROJECT_STATUS.md) ·
-[Data provenance](data/README.md) · [Reproducible results](results/README.md) ·
+[Data contract](docs/DATA_CONTRACT.md) · [Data provenance](data/README.md) ·
+[Reproducible results](results/README.md) ·
 [Presentation](presentation/README.md) · [Contributing](CONTRIBUTING.md)
 
 ## Current evidence at a glance
@@ -24,6 +25,8 @@ explains the idea, the repository layout and the code path in plain language.
 | Software demonstration | Labelled synthetic BMP curves | End-to-end fitting, uncertainty and held-out-batch workflow | Scientific validation |
 | Reactor-level benchmark | Kozłowski et al. (2025), 12 trajectories | Reproducible kinetic-family comparison | A universal biochar mechanism |
 | Author-shared summary analysis | Zhang et al. (2022), treatment means and SDs | Kinetic/VFA analysis with explicit limitations | Replicate-held-out validation or new significance tests |
+| Independent dose challenge | Valentin & Białowiec (2024), five fitted-dose endpoints | Falsifies the log-quadratic form as tested | Full reactor-trajectory validation |
+| Public design/material tables | García-Prats et al. (2024) | Tests metadata and material-aware structure | Methane outcomes not present in the public tables |
 
 The exact readiness assessment, limitations and next validation gate are maintained in
 [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md).
@@ -62,6 +65,7 @@ represents biochar dose and temperature explicitly:
 - comparison with a parsimonious constant-Gompertz baseline using AIC, AICc and BIC;
 - leave-one-batch-out validation to separate curve fitting from prediction;
 - reproducible CSV, JSON and publication-ready PNG outputs.
+- a minimum reactor-time-point data contract with automated intake validation.
 
 ## Model
 
@@ -160,6 +164,20 @@ biochar-ad fit path/to/bmp_data.csv --output outputs
 Required columns are `batch_id`, `time_days`, `dose_g_l`, `temperature_c`, and
 `methane_ml_g_vs`.
 
+## Contribute reactor-level data
+
+The reusable intake contract keeps raw and blank-corrected measurements together,
+preserves reactor identity and controls, and attaches QC plus provenance to every
+observation. Start from the template and validate it before modelling:
+
+```bash
+biochar-ad validate-intake data/templates/reactor_observations.csv
+```
+
+Passing this structural gate does not turn a limited design into causal or globally
+predictive evidence. Field definitions and warnings are documented in
+[`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md).
+
 ## Presentation
 
 An animated, single-file HTML deck at [`presentation/index.html`](presentation/index.html)
@@ -182,6 +200,7 @@ GitHub Actions runs both checks on Python 3.10 and 3.12.
 src/biochar_ad_twin/   installable modelling and reporting package
 tests/                 unit and end-to-end workflow tests
 data/experimental/     redistributable, provenance-documented inputs
+data/templates/        reusable reactor-level contribution contract
 scripts/               deterministic ingestion and analysis entry points
 results/               reproducible reference outputs and interpretation
 presentation/          animated project-overview deck

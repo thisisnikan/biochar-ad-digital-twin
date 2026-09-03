@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-09-03
+
+- Added a minimum experimental record for reactor-level Biochar–AD contributions.
+- Added `biochar-ad validate-intake` with machine-readable errors and scientific-limit warnings.
+- Added a worked CSV template and tests for duplicate keys, changing reactor metadata and missing blanks.
+
 All notable project changes are documented here. The project follows a research-prototype
 release model while the public API remains experimental.
 

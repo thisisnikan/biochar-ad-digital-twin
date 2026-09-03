@@ -48,3 +48,5 @@ body:
           required: true
         - label: I have permission to share any files I propose to publish.
           required: true
+        - label: Reactor-level files use the minimum experimental record or document an explicit source-to-contract mapping.
+          required: true
