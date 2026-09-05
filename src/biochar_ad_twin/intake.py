@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Literal
 
+import numpy as np
 import pandas as pd
 
 IssueSeverity = Literal["error", "warning"]
@@ -151,6 +152,9 @@ def validate_reactor_observations(frame: pd.DataFrame) -> IntakeReport:
         return IntakeReport(len(frame), 0, 0, tuple(issues))
 
     data = frame.loc[:, REQUIRED_OBSERVATION_COLUMNS].copy()
+    if data.empty:
+        issues.append(_issue("error", "empty_dataset", "At least one observation is required"))
+        return IntakeReport(0, 0, 0, tuple(issues))
 
     for column in IDENTIFIER_COLUMNS:
         empty = data[column].isna() | data[column].astype(str).str.strip().eq("")
@@ -166,13 +170,15 @@ def validate_reactor_observations(frame: pd.DataFrame) -> IntakeReport:
     numeric: dict[str, pd.Series] = {}
     for column in NUMERIC_COLUMNS:
         numeric[column] = pd.to_numeric(data[column], errors="coerce")
-        invalid = data[column].notna() & numeric[column].isna()
+        invalid = data[column].notna() & (
+            numeric[column].isna() | ~np.isfinite(numeric[column])
+        )
         if invalid.any():
             issues.append(
                 _issue(
                     "error",
                     "invalid_numeric",
-                    f"{column} contains {int(invalid.sum())} non-numeric value(s)",
+                    f"{column} contains {int(invalid.sum())} non-numeric or non-finite value(s)",
                 )
             )
 
@@ -200,15 +206,28 @@ def validate_reactor_observations(frame: pd.DataFrame) -> IntakeReport:
             _issue("error", "invalid_dose", "dose_value must be present and non-negative")
         )
 
-    invalid_units = sorted(set(data["dose_unit"].dropna().astype(str)) - ALLOWED_DOSE_UNITS)
-    if invalid_units:
+    invalid_units = ~data["dose_unit"].isin(ALLOWED_DOSE_UNITS)
+    if invalid_units.any():
         issues.append(
             _issue(
                 "error",
                 "invalid_dose_unit",
-                "Unsupported dose_unit value(s): " + ", ".join(invalid_units),
+                f"{int(invalid_units.sum())} row(s) have missing or unsupported dose_unit",
             )
         )
+
+    unspecified_positive_dose = data["dose_unit"].eq("none") & numeric["dose_value"].gt(0)
+    if unspecified_positive_dose.any():
+        issues.append(
+            _issue("error", "missing_dose_basis", "Positive doses require a physical dose unit")
+        )
+
+    # Compare typed values, so e.g. time 1 and "1.0" identify the same observation.
+    # Work on the copy only; original source values remain untouched.
+    for column, values in numeric.items():
+        data[column] = values
+    for column, values in boolean.items():
+        data[column] = values
 
     key = ["study_id", "experiment_id", "reactor_id", "time_days"]
     duplicate = data.duplicated(key, keep=False)
@@ -260,14 +279,23 @@ def validate_reactor_observations(frame: pd.DataFrame) -> IntakeReport:
     experiment_keys = ["study_id", "experiment_id"]
     for experiment, group in data.groupby(experiment_keys, dropna=False):
         experiment_name = "/".join(map(str, experiment))
-        group_control = _coerce_boolean(group["is_control"]).fillna(False).astype(bool)
-        group_blank = _coerce_boolean(group["is_inoculum_blank"]).fillna(False).astype(bool)
-        if not group_control.any():
+        eligible = group.loc[group["qc_include"].fillna(False).astype(bool)]
+        group_control = eligible["is_control"].fillna(False).astype(bool)
+        group_blank = eligible["is_inoculum_blank"].fillna(False).astype(bool)
+        if eligible.empty:
+            issues.append(
+                _issue(
+                    "warning",
+                    "no_included_observations",
+                    f"Experiment {experiment_name} has no QC-included observations",
+                )
+            )
+        if not (group_control & ~group_blank).any():
             issues.append(
                 _issue(
                     "warning",
                     "missing_control",
-                    f"Experiment {experiment_name} has no row marked as a control",
+                    f"Experiment {experiment_name} has no QC-included non-blank control",
                 )
             )
         if not group_blank.any():
@@ -275,21 +303,25 @@ def validate_reactor_observations(frame: pd.DataFrame) -> IntakeReport:
                 _issue(
                     "warning",
                     "missing_inoculum_blank",
-                    f"Experiment {experiment_name} has no inoculum-only blank",
+                    f"Experiment {experiment_name} has no QC-included inoculum-only blank",
                 )
             )
 
-    reactor_metadata = data.drop_duplicates(["study_id", "experiment_id", "reactor_id"])
-    treatment_counts = reactor_metadata.groupby(
-        ["study_id", "experiment_id", "treatment_id"], dropna=False
-    )["reactor_id"].nunique()
+    treatment_key = ["study_id", "experiment_id", "treatment_id"]
+    all_treatments = data.groupby(treatment_key, dropna=False).size().index
+    reactor_metadata = data.loc[include].drop_duplicates(reactor_key)
+    treatment_counts = (
+        reactor_metadata.groupby(treatment_key, dropna=False)["reactor_id"]
+        .nunique()
+        .reindex(all_treatments, fill_value=0)
+    )
     unreplicated = treatment_counts[treatment_counts < 2]
     if len(unreplicated):
         issues.append(
             _issue(
                 "warning",
                 "unreplicated_treatment",
-                f"{len(unreplicated)} treatment(s) contain fewer than two reactors",
+                f"{len(unreplicated)} treatment(s) contain fewer than two QC-included reactors",
             )
         )
 

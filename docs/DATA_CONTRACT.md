@@ -43,8 +43,27 @@ The automated gate rejects missing identifiers, invalid numbers or booleans,
 negative time/dose, duplicate observation keys, unsupported dose units, changing
 reactor metadata, and included rows without a raw methane measurement.
 
-It warns about missing processed yields, missing controls, missing inoculum blanks,
-unreplicated treatments and decreasing cumulative raw trajectories. A warning is a
+Empty datasets, infinite numeric values, and missing dose units are also rejected.
+The `none` dose unit is allowed only at zero dose. Numeric and boolean values are
+compared after parsing: for example, time `1` and `1.0` identify the same observation,
+and numeric text is sorted numerically when checking cumulative trajectories.
+Validation does not modify the supplied frame or source file.
+
+It warns about missing processed yields, missing non-blank substrate controls,
+missing inoculum blanks, unreplicated treatments and decreasing cumulative raw
+trajectories. An inoculum-only blank does not replace a substrate control, even
+when both have `is_control = true`.
+
+Control and replication checks use only observations with `qc_include = true`.
+A reactor with at least one included observation counts once; fully excluded
+reactors do not satisfy these checks. Treatments with zero included reactors still
+receive the replication warning, and fully excluded experiments receive a
+`no_included_observations` warning. Report totals retain all submitted observations,
+reactors and experiments, including excluded ones, to preserve the audit trail.
+The cumulative-trajectory warning also retains excluded observations for source QC.
+
+These are presence checks, not proof of complete usable trajectories, matched
+controls at every condition, or sufficient independent replication. A warning is a
 scientific limitation to report, not permission to manufacture missing information.
 
 Passing this gate establishes structural integrity only. Causal mechanism claims,
