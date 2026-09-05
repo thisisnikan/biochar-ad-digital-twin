@@ -1,0 +1,117 @@
+{
+  "valid": true,
+  "row_count": 7575,
+  "reactor_count": 15,
+  "experiment_count": 1,
+  "errors": 0,
+  "warnings": 1,
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "decreasing_cumulative_raw",
+      "message": "Raw cumulative methane decreases at 2 time point(s)"
+    }
+  ],
+  "source": {
+    "doi": "10.1038/s41598-025-02564-0",
+    "sha256": "a5be0c25990acbdd0a6ac14dfa202398e61713fea8496884018e97f1cf87b983",
+    "sheet": "Godzinowe"
+  },
+  "decreasing_raw_records": [
+    {
+      "reactor_id": "K1",
+      "time_hours": 469.0,
+      "change_ml": -2.9,
+      "source_record_id": "Godzinowe!E487",
+      "qc_include": true
+    },
+    {
+      "reactor_id": "K1",
+      "time_hours": 484.0,
+      "change_ml": -3.9,
+      "source_record_id": "Godzinowe!E502",
+      "qc_include": true
+    }
+  ],
+  "design": {
+    "blank_reactors": 3,
+    "substrate_reactors": 12,
+    "included_substrate_reactors": 10,
+    "temperatures_c": [
+      37
+    ],
+    "amended_doses_g_l": [
+      5.0
+    ],
+    "independent_studies": 1
+  },
+  "source_conflicts": [
+    {
+      "code": "source_time_divisor_conflict",
+      "rows": 7560,
+      "reactors": [
+        "K1",
+        "K2",
+        "K3",
+        "O+B1",
+        "O+B2",
+        "O+B3",
+        "O+H1",
+        "O+H2",
+        "O+H3",
+        "O+T1",
+        "O+T2",
+        "O+T3",
+        "O1",
+        "O2",
+        "O3"
+      ]
+    },
+    {
+      "code": "source_control_dose_conflict",
+      "rows": 1515,
+      "reactors": [
+        "O1",
+        "O2",
+        "O3"
+      ]
+    }
+  ],
+  "evidence_gaps": [
+    {
+      "code": "nonmonotonic_blank",
+      "status": "unresolved_source_qc",
+      "needed": "Check K1 at 469 and 484 hours (E487 and E502). The blank remains included to preserve the historical correction; no clipping or repair is applied."
+    },
+    {
+      "code": "single_temperature",
+      "status": "absent_from_design",
+      "needed": "Reactor trajectories at additional digestion temperatures."
+    },
+    {
+      "code": "single_amended_dose_per_material",
+      "status": "absent_from_design",
+      "needed": "Several doses of the same material with matched controls and replicates."
+    },
+    {
+      "code": "no_independent_study_holdout",
+      "status": "absent_from_this_import",
+      "needed": "An independent reactor-level study for preregistered external validation."
+    },
+    {
+      "code": "control_dose_conflict",
+      "status": "unresolved_source_conflict",
+      "needed": "Confirm H:J rows 10 and 12 with authors. Canonical control dose remains zero following article design, worksheet labels and legacy mapping; source values retained."
+    },
+    {
+      "code": "batch_identity",
+      "status": "not_established_by_import",
+      "needed": "Verify inoculum collection and material production batch identifiers. Study-scoped IDs do not establish independent batches."
+    },
+    {
+      "code": "additional_process_and_material_context",
+      "status": "not_harmonized_in_this_import",
+      "needed": "Harmonize working volume and gas reference conditions, material descriptors and process chemistry from their sources. Not imported does not mean unreported."
+    }
+  ]
+}
