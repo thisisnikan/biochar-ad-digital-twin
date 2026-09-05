@@ -43,18 +43,27 @@ Last reviewed: 5 September 2026
 
 ## Next validation gate
 
-The next publication-level gate is an independent dataset containing:
+Validation proceeds in two stages; one dataset need not satisfy both at once.
+The [staged protocol and source screening](VALIDATION_PLAN.md) records acceptance
+criteria and the remaining acquisition work.
 
-1. reactor-level methane or biogas trajectories;
-2. at least three biochar doses and more than one temperature;
-3. biological or reactor replicates plus inoculum-only controls;
-4. substrate, inoculum, S/I ratio, reactor and material metadata;
-5. a preregistered held-out-study comparison against parsimonious baselines.
+1. **Dose first:** independent reactor trajectories at one digestion temperature,
+   with a zero-dose substrate control, at least three amended doses of the same
+   material, intact replicates, blanks and traceable metadata.
+2. **Temperature second:** replicated dose-by-digestion-temperature designs,
+   followed by temperature prediction and parameter-identifiability checks.
+3. Freeze QC, model candidates and held-out criteria before evaluating new raw
+   outcomes. Within-study refitting is not held-out-study transfer.
 
-The Valentin & Białowiec (2024) table satisfies part of criterion 2 (five doses) at the
-kinetic-parameter level, but not criteria 1 or 3: it has one temperature and no raw reactor
-trajectories or replicate-level residuals. Independent reactor-level, multi-temperature data
-with intact replicates is still required.
+The Valentin & Białowiec table remains a parameter-level challenge, not Stage A
+reactor validation. The 15-reactor Kozłowski intake adds no independent study,
+dose or temperature. Its blank QC and control-dose source conflicts remain
+unresolved. No new independent raw dataset was acquired in this update.
+
+All three model candidates now share whole-batch folds, robust loss and common
+parameter bounds. Mean fold RMSE is primary; AICc is descriptive. At one training
+temperature Q10 is fixed to 1. This improves the software comparison but supplies
+no new external scientific evidence.
 
 Until that gate is passed, the repository should be described as a **reproducible research
 prototype for falsifiable kinetic modelling**, not as a validated predictive product.

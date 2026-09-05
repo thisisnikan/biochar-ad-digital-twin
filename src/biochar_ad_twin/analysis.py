@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict
-
 import numpy as np
 import pandas as pd
-from scipy.optimize import least_squares
 
 from biochar_ad_twin.fit import fit_global, predict_frame
+
+CANDIDATES = {
+    "constant_gompertz": "constant",
+    "log_linear_dose_temperature": "log_linear",
+    "global_dose_temperature": "log_quadratic",
+}
 
 
 def information_criteria(observed: np.ndarray, predicted: np.ndarray, k: int) -> dict[str, float]:
@@ -28,36 +31,15 @@ def information_criteria(observed: np.ndarray, predicted: np.ndarray, k: int) ->
     }
 
 
-def _fit_constant_gompertz(frame: pd.DataFrame) -> tuple[np.ndarray, int]:
-    """Fit an intentionally simple condition-agnostic modified Gompertz baseline."""
-    time = frame["time_days"].to_numpy(float)
-    observed = frame["methane_ml_g_vs"].to_numpy(float)
-
-    def prediction(values: np.ndarray) -> np.ndarray:
-        potential, rate, lag = values
-        exponent = (np.e * rate / potential) * (lag - time) + 1.0
-        return potential * np.exp(-np.exp(np.clip(exponent, -50.0, 50.0)))
-
-    solution = least_squares(
-        lambda values: prediction(values) - observed,
-        x0=np.array([300.0, 18.0, 2.0]),
-        bounds=([1.0, 0.01, 0.0], [2000.0, 500.0, 30.0]),
-        loss="linear",
-    )
-    return prediction(solution.x), 3
-
-
 def compare_models(frame: pd.DataFrame) -> pd.DataFrame:
     """Compare the proposed global model with a parsimonious Gompertz baseline."""
     frame = frame.reset_index(drop=True)
     observed = frame["methane_ml_g_vs"].to_numpy(float)
-    parameters, _ = fit_global(frame)
-    candidates = {
-        "global_dose_temperature": (predict_frame(frame, parameters), len(asdict(parameters))),
-        "constant_gompertz": _fit_constant_gompertz(frame),
-    }
     rows = []
-    for name, (predicted, k) in candidates.items():
+    for name, response in CANDIDATES.items():
+        parameters, metrics = fit_global(frame, response=response)
+        predicted = predict_frame(frame, parameters)
+        k = int(metrics["n_parameters"])
         residual = observed - predicted
         rows.append(
             {
@@ -73,19 +55,44 @@ def compare_models(frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def leave_one_batch_out(frame: pd.DataFrame) -> pd.DataFrame:
-    """Estimate extrapolation error by withholding every experimental batch once."""
+    """Compare all candidates on identical, whole-batch holdouts.
+
+    Fit parameters, bounds and robust loss are shared across nested candidates.
+    A single training temperature cannot support extrapolation to a new one.
+    This is within-dataset validation, not held-out-study validation.
+    """
+    if frame["batch_id"].nunique() < 3:
+        raise ValueError("Batch holdout requires at least three batches")
     rows = []
     for batch_id in frame["batch_id"].drop_duplicates():
         train = frame.loc[frame["batch_id"] != batch_id].reset_index(drop=True)
         test = frame.loc[frame["batch_id"] == batch_id].reset_index(drop=True)
-        parameters, _ = fit_global(train)
-        residual = test["methane_ml_g_vs"].to_numpy(float) - predict_frame(test, parameters)
-        rows.append(
-            {
-                "held_out_batch": batch_id,
-                "n_test": len(test),
-                "rmse_ml_g_vs": float(np.sqrt(np.mean(residual**2))),
-                "mae_ml_g_vs": float(np.mean(np.abs(residual))),
-            }
-        )
+        if train["temperature_c"].nunique() == 1 and not test["temperature_c"].isin(
+            train["temperature_c"].unique()
+        ).all():
+            raise ValueError("Cannot estimate temperature extrapolation from one training temperature")
+        for name, response in CANDIDATES.items():
+            parameters, metrics = fit_global(train, response=response)
+            residual = test["methane_ml_g_vs"].to_numpy(float) - predict_frame(test, parameters)
+            rows.append(
+                {
+                    "model": name,
+                    "held_out_batch": batch_id,
+                    "n_train": len(train),
+                    "n_test": len(test),
+                    "parameters": int(metrics["n_parameters"]),
+                    "rmse_ml_g_vs": float(np.sqrt(np.mean(residual**2))),
+                    "mae_ml_g_vs": float(np.mean(np.abs(residual))),
+                }
+            )
     return pd.DataFrame(rows)
+
+
+def summarize_holdouts(validation: pd.DataFrame) -> pd.DataFrame:
+    """Weight each held-out batch equally; keep training criteria secondary."""
+    summary = validation.groupby("model", as_index=False).agg(
+        mean_held_out_rmse_ml_g_vs=("rmse_ml_g_vs", "mean"),
+        mean_held_out_mae_ml_g_vs=("mae_ml_g_vs", "mean"),
+        n_folds=("held_out_batch", "nunique"),
+    )
+    return summary.sort_values("mean_held_out_rmse_ml_g_vs").reset_index(drop=True)

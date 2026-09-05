@@ -35,19 +35,45 @@ def predict_frame(frame: pd.DataFrame, parameters: KineticParameters) -> np.ndar
     return prediction
 
 
-def fit_global(frame: pd.DataFrame) -> tuple[KineticParameters, dict[str, float]]:
+def fit_global(
+    frame: pd.DataFrame, response: str = "log_quadratic"
+) -> tuple[KineticParameters, dict[str, float]]:
     """Fit all batch conditions simultaneously and return diagnostic metrics."""
 
     frame = frame.reset_index(drop=True).copy()
     validate_dataset(frame)
     observed = frame["methane_ml_g_vs"].to_numpy(dtype=float)
 
-    def residual(values: np.ndarray) -> np.ndarray:
-        return predict_frame(frame, _unpack(values)) - observed
-
+    if response not in {"constant", "log_linear", "log_quadratic"}:
+        raise ValueError(f"Unknown response model: {response}")
     initial = np.array(list(asdict(KineticParameters()).values()), dtype=float)
-    solution = least_squares(residual, initial, bounds=(LOWER, UPPER), loss="soft_l1")
-    parameters = _unpack(solution.x)
+    active = np.ones(len(initial), dtype=bool)
+    if response in {"constant", "log_linear"}:
+        active[[4, 6]] = False
+        initial[[4, 6]] = 0
+    if response == "constant":
+        active[[3, 5, 7]] = False
+        initial[[3, 5]] = 0
+        initial[7] = 1
+    elif frame["temperature_c"].nunique() == 1:
+        # At one temperature Q10 cannot be identified separately from rate_0.
+        active[7] = False
+        initial[7] = 1
+
+    def unpack_active(values: np.ndarray) -> KineticParameters:
+        full = initial.copy()
+        full[active] = values
+        return _unpack(full)
+
+    def residual(values: np.ndarray) -> np.ndarray:
+        return predict_frame(frame, unpack_active(values)) - observed
+
+    solution = least_squares(
+        residual, initial[active], bounds=(LOWER[active], UPPER[active]), loss="soft_l1"
+    )
+    if not solution.success:
+        raise RuntimeError(f"Kinetic fit did not converge: {solution.message}")
+    parameters = unpack_active(solution.x)
     fitted = predict_frame(frame, parameters)
     errors = observed - fitted
     ss_total = float(np.sum((observed - observed.mean()) ** 2))
@@ -56,6 +82,7 @@ def fit_global(frame: pd.DataFrame) -> tuple[KineticParameters, dict[str, float]
         "mae_ml_g_vs": float(np.mean(np.abs(errors))),
         "r_squared": float(1 - np.sum(errors**2) / ss_total),
         "n_observations": float(len(frame)),
+        "n_parameters": float(active.sum()),
     }
     return parameters, metrics
 

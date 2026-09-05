@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from .analysis import compare_models, leave_one_batch_out
+from .analysis import compare_models, leave_one_batch_out, summarize_holdouts
 from .baselines import compare_experimental_baselines
 from .data import generate_demo_dataset
 from .effects import build_within_study_effect_table
@@ -144,6 +144,8 @@ def main() -> None:
     validation = leave_one_batch_out(frame)
     comparison.to_csv(args.output / "model_comparison.csv", index=False)
     validation.to_csv(args.output / "leave_one_batch_out.csv", index=False)
+    holdout_summary = summarize_holdouts(validation)
+    holdout_summary.to_csv(args.output / "held_out_model_comparison.csv", index=False)
     if args.command == "demo":
         bootstrap = bootstrap_parameters(frame, iterations=args.bootstrap)
         bootstrap.describe(percentiles=[0.025, 0.5, 0.975]).to_csv(
@@ -155,7 +157,9 @@ def main() -> None:
                 "parameters": asdict(parameters),
                 "metrics": metrics,
                 "best_model_by_aicc": comparison.iloc[0]["model"],
-                "mean_held_out_rmse_ml_g_vs": validation["rmse_ml_g_vs"].mean(),
+                "selection_metric": "mean whole-batch-held-out RMSE",
+                "best_model_by_held_out_rmse": holdout_summary.iloc[0]["model"],
+                "held_out_comparison": holdout_summary.to_dict(orient="records"),
             },
             indent=2,
         )

@@ -2,6 +2,12 @@
 
 ## 2026-09-05
 
+- Compare constant, log-linear and log-quadratic candidates on identical batch
+  holdouts, with shared fitting settings and per-model summaries.
+- Fix Q10 at one training temperature, reject unsupported temperature holdouts,
+  and surface failed optimizer convergence.
+- Document dose-first, temperature-second validation and public-source access;
+  independent raw data acquisition remains pending.
 - Added a hash-verified real-data intake export for all 15 Kozłowski reactors,
   including individual blanks, cell references, VS denominators and source-dose conflicts.
 - Added the deterministic compressed CSV, validation JSON and remaining-evidence report;

@@ -1,0 +1,4 @@
+model,mean_held_out_rmse_ml_g_vs,mean_held_out_mae_ml_g_vs,n_folds
+global_dose_temperature,3.691075802078843,3.0328136118386277,8
+log_linear_dose_temperature,16.281230192884834,14.773506063528856,8
+constant_gompertz,72.6200897313927,59.591463168075926,8
