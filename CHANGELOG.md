@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-09-05
+
+- Hardened the experimental intake gate against empty files, non-finite numeric values,
+  missing dose units and positive doses without a physical unit.
+- Compare parsed times and metadata consistently while preserving source values.
+- Distinguish substrate controls from inoculum blanks and count only QC-included
+  reactors for control and replication warnings, retaining all submitted records.
+
 ## 2026-09-03
 
 - Added a minimum experimental record for reactor-level Biochar–AD contributions.
