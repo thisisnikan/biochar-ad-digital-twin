@@ -62,8 +62,9 @@ represents biochar dose and temperature explicitly:
 - Q10 temperature correction for production rate;
 - robust global least-squares estimation;
 - residual-bootstrap uncertainty that preserves batch structure;
-- comparison with a parsimonious constant-Gompertz baseline using AIC, AICc and BIC;
-- leave-one-batch-out validation to separate curve fitting from prediction;
+- comparison with constant-Gompertz and log-linear dose baselines;
+- identical leave-one-batch-out folds for all three models, ranked by mean RMSE;
+- descriptive training AIC, AICc and BIC;
 - reproducible CSV, JSON and publication-ready PNG outputs.
 - a minimum reactor-time-point data contract with automated intake validation.
 
@@ -95,7 +96,8 @@ The command creates:
 - `fit_summary.json` — fitted parameters and diagnostic metrics;
 - `bootstrap_summary.csv` — uncertainty summary;
 - `model_comparison.csv` — baseline comparison and ΔAICc;
-- `leave_one_batch_out.csv` — prediction error for every held-out batch;
+- `leave_one_batch_out.csv` — prediction error for every model and held-out batch;
+- `held_out_model_comparison.csv` — three models ranked by mean held-out RMSE;
 - `fitted_curves.png` — observed and fitted profiles.
 
 ## Real experimental benchmark
@@ -163,6 +165,12 @@ biochar-ad fit path/to/bmp_data.csv --output outputs
 
 Required columns are `batch_id`, `time_days`, `dose_g_l`, `temperature_c`, and
 `methane_ml_g_vs`.
+
+The full comparison requires at least three batches. At one training temperature,
+Q10 is fixed rather than estimated; extrapolation to an unseen temperature from
+one training temperature is rejected. Each batch receives equal weight in the
+summary. See the [staged validation protocol](docs/VALIDATION_PLAN.md) for split
+definitions, model assumptions and independent-data requirements.
 
 ## Contribute reactor-level data
 
