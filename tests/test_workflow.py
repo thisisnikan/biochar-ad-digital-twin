@@ -1,11 +1,13 @@
 import json
 
+import numpy as np
 import pandas as pd
 import pytest
 
 from biochar_ad_twin import cli
+from biochar_ad_twin.cli import _identifiability_warning
 from biochar_ad_twin.data import generate_demo_dataset, validate_dataset
-from biochar_ad_twin.fit import fit_global
+from biochar_ad_twin.fit import _numerical_jacobian, fit_global
 
 
 def test_demo_global_fit(tmp_path) -> None:
@@ -21,6 +23,49 @@ def test_fit_global_reports_parameter_identifiability(tmp_path) -> None:
 
     assert 0.0 <= metrics["max_parameter_correlation"] <= 1.0
     assert metrics["parameter_gram_condition_number"] > 1.0
+
+
+def test_numerical_jacobian_matches_a_known_linear_function() -> None:
+    # residual(x) = A @ x - b has an exact, x-independent Jacobian of A.
+    a = np.array([[2.0, 0.0], [1.0, -3.0], [0.0, 4.0]])
+    b = np.array([1.0, 2.0, 3.0])
+
+    def residual(x: np.ndarray) -> np.ndarray:
+        return a @ x - b
+
+    jacobian = _numerical_jacobian(
+        residual, np.array([0.5, 0.5]), np.array([-10.0, -10.0]), np.array([10.0, 10.0])
+    )
+
+    assert np.allclose(jacobian, a, atol=1e-6)
+
+
+def test_numerical_jacobian_respects_bounds_at_the_edge() -> None:
+    def residual(x: np.ndarray) -> np.ndarray:
+        return x**2
+
+    # x[0] is pinned at its upper bound, so the derivative must be computed
+    # one-sided (via a clipped forward step) instead of centered.
+    jacobian = _numerical_jacobian(
+        residual, np.array([5.0]), np.array([0.0]), np.array([5.0])
+    )
+
+    assert np.isclose(jacobian[0, 0], 10.0, atol=1e-3)
+
+
+def test_identifiability_warning_treats_nan_as_worse_than_confounded() -> None:
+    # A NaN correlation (diagnostic failed to compute) must still warn --
+    # `NaN >= threshold` is False in Python, so a naive check would silently
+    # report "no confounding" for the one case that is actually less trusted.
+    nan_warning = _identifiability_warning(float("nan"))
+    assert nan_warning is not None
+    assert "could not be computed" in nan_warning
+
+    confounded_warning = _identifiability_warning(0.99)
+    assert confounded_warning is not None
+    assert "confounded" in confounded_warning
+
+    assert _identifiability_warning(0.5) is None
 
 
 def test_cli_fit_warns_when_parameters_are_confounded(tmp_path, monkeypatch, capsys) -> None:

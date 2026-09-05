@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import math
 from dataclasses import asdict
 from pathlib import Path
 
@@ -76,6 +77,31 @@ def build_parser() -> argparse.ArgumentParser:
     )
     intake.add_argument("csv", type=Path)
     return parser
+
+
+def _identifiability_warning(max_correlation: float) -> str | None:
+    """Translate fit_global's max_parameter_correlation into a CLI-facing warning.
+
+    A NaN correlation means the diagnostic itself failed (e.g. every
+    off-diagonal entry was non-finite because a parameter sits at its fit
+    bound), which must not be read as "no confounding found" — that would be
+    the worst case reported as the best case.
+    """
+    if math.isnan(max_correlation):
+        return (
+            "The parameter-identifiability diagnostic could not be computed (the "
+            "correlation matrix was entirely non-finite, e.g. a parameter sits at its "
+            "fit bound). Treat this fit's parameters as unverified rather than assuming "
+            "they are well separated."
+        )
+    if max_correlation >= IDENTIFIABILITY_CORRELATION_THRESHOLD:
+        return (
+            "At least two of the eight kinetic parameters are practically confounded "
+            f"(|correlation| >= {IDENTIFIABILITY_CORRELATION_THRESHOLD}): the data cannot "
+            "separate their individual values, only some combination of them. Point "
+            "estimates for those parameters should not be interpreted individually."
+        )
+    return None
 
 
 def main() -> None:
@@ -182,14 +208,7 @@ def main() -> None:
             args.output / "bootstrap_summary.csv"
         )
 
-    identifiability_warning = None
-    if metrics["max_parameter_correlation"] >= IDENTIFIABILITY_CORRELATION_THRESHOLD:
-        identifiability_warning = (
-            "At least two of the eight kinetic parameters are practically confounded "
-            f"(|correlation| >= {IDENTIFIABILITY_CORRELATION_THRESHOLD}): the data cannot "
-            "separate their individual values, only some combination of them. Point "
-            "estimates for those parameters should not be interpreted individually."
-        )
+    identifiability_warning = _identifiability_warning(metrics["max_parameter_correlation"])
     print(
         json.dumps(
             {

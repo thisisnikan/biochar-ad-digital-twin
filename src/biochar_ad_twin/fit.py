@@ -41,21 +41,51 @@ def predict_frame(frame: pd.DataFrame, parameters: KineticParameters) -> np.ndar
     return prediction
 
 
-def parameter_covariance(solution, n_observations: int) -> np.ndarray:
-    """Approximate the parameter covariance matrix at a least_squares solution.
+def _numerical_jacobian(
+    residual_fn, x: np.ndarray, lower: np.ndarray, upper: np.ndarray, relative_step: float = 1e-6
+) -> np.ndarray:
+    """Central-difference Jacobian of the raw ``residual_fn`` at ``x``.
+
+    ``least_squares(..., loss="soft_l1")`` returns ``solution.jac`` scaled by
+    the robust loss's derivative, while ``solution.fun`` stays the raw,
+    unweighted residual. Pairing that reweighted Jacobian with the raw
+    residual variance (as an ordinary least-squares covariance formula
+    expects) is inconsistent. Recomputing an unweighted Jacobian here keeps
+    the identifiability diagnostic paired with the same raw residuals used
+    for the residual-variance estimate.
+    """
+    x = np.asarray(x, dtype=float)
+    baseline = residual_fn(x)
+    jacobian = np.empty((baseline.size, x.size), dtype=float)
+    for i in range(x.size):
+        step = relative_step * max(abs(x[i]), 1.0)
+        x_plus = x.copy()
+        x_minus = x.copy()
+        x_plus[i] = min(x[i] + step, upper[i])
+        x_minus[i] = max(x[i] - step, lower[i])
+        span = x_plus[i] - x_minus[i]
+        if span <= 0:
+            jacobian[:, i] = 0.0
+            continue
+        jacobian[:, i] = (residual_fn(x_plus) - residual_fn(x_minus)) / span
+    return jacobian
+
+
+def parameter_covariance(jacobian: np.ndarray, residuals: np.ndarray, n_observations: int) -> np.ndarray:
+    """Approximate the parameter covariance matrix from a Jacobian and its residuals.
 
     Uses the standard nonlinear-least-squares approximation
-    ``cov = residual_variance * pinv(J^T J)`` (Bates & Watts 1988), where ``J``
-    is the Jacobian of the residuals at the solution. A pseudo-inverse is used
-    because near-confounded parameters make ``J^T J`` close to singular; that
-    near-singularity is itself the identifiability signal callers should read
-    from the resulting correlations, not an error to hide.
+    ``cov = residual_variance * pinv(J^T J)`` (Bates & Watts 1988). A
+    pseudo-inverse is used because near-confounded parameters make ``J^T J``
+    close to singular; that near-singularity is itself the identifiability
+    signal callers should read from the resulting correlations, not an error
+    to hide. ``jacobian`` and ``residuals`` must come from the same
+    (unweighted) residual function.
     """
 
-    jacobian = solution.jac
     n_params = jacobian.shape[1]
     degrees_of_freedom = max(n_observations - n_params, 1)
-    residual_variance = float(np.sum(solution.fun**2)) / degrees_of_freedom
+    residual_variance = float(np.sum(residuals**2)) / degrees_of_freedom
     return residual_variance * np.linalg.pinv(jacobian.T @ jacobian)
 
 
@@ -69,14 +99,14 @@ def parameter_correlation_matrix(covariance: np.ndarray) -> pd.DataFrame:
     return pd.DataFrame(correlation, index=PARAMETER_NAMES, columns=PARAMETER_NAMES)
 
 
-def _identifiability_metrics(solution, n_observations: int) -> dict[str, float]:
-    covariance = parameter_covariance(solution, n_observations)
+def _identifiability_metrics(jacobian: np.ndarray, residuals: np.ndarray, n_observations: int) -> dict[str, float]:
+    covariance = parameter_covariance(jacobian, residuals, n_observations)
     correlation = parameter_correlation_matrix(covariance).to_numpy()
     n_params = correlation.shape[0]
     off_diagonal = correlation[~np.eye(n_params, dtype=bool)]
     off_diagonal = off_diagonal[np.isfinite(off_diagonal)]
     max_correlation = float(np.max(np.abs(off_diagonal))) if off_diagonal.size else float("nan")
-    gram = solution.jac.T @ solution.jac
+    gram = jacobian.T @ jacobian
     condition_number = float(np.linalg.cond(gram)) if np.all(np.isfinite(gram)) else float("inf")
     return {
         "max_parameter_correlation": max_correlation,
@@ -113,7 +143,8 @@ def fit_global(frame: pd.DataFrame) -> tuple[KineticParameters, dict[str, float]
         "r_squared": float(1 - np.sum(errors**2) / ss_total),
         "n_observations": float(len(frame)),
     }
-    metrics.update(_identifiability_metrics(solution, len(observed)))
+    jacobian = _numerical_jacobian(residual, solution.x, LOWER, UPPER)
+    metrics.update(_identifiability_metrics(jacobian, solution.fun, len(observed)))
     return parameters, metrics
 
 

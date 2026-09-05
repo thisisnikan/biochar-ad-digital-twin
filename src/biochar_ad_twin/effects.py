@@ -82,14 +82,14 @@ def _reactor_kinetic_estimates(frame: pd.DataFrame) -> pd.DataFrame:
 
     rows = []
     valid = frame.loc[_include_mask(frame)]
-    for (treatment, replicate), reactor in valid.groupby(
-        ["treatment", "replicate"], sort=True
+    for (study_id, treatment, replicate), reactor in valid.groupby(
+        ["study_id", "treatment", "replicate"], sort=True
     ):
         parameters, _ = fit_baseline(reactor, BASELINES["modified_gompertz"])
         first = reactor.iloc[0]
         rows.append(
             {
-                "study_id": first["study_id"],
+                "study_id": study_id,
                 "source_doi": first["source_doi"],
                 "treatment": treatment,
                 "replicate": replicate,
@@ -105,11 +105,28 @@ def _reactor_kinetic_estimates(frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def reactor_within_study_effects(frame: pd.DataFrame) -> pd.DataFrame:
-    """Estimate biochar effects from independently fitted reactor trajectories."""
+    """Estimate biochar effects from independently fitted reactor trajectories.
+
+    ``frame`` may contain reactor observations from more than one study (the
+    CLI already combines studies before writing a per-study output file), so
+    every control/treatment comparison below is computed strictly within one
+    ``study_id`` group. Never compare or pool control/treatment reactors
+    across studies here, even if they happen to share a treatment label.
+    """
     estimates = _reactor_kinetic_estimates(frame)
+    tables = [
+        _reactor_effects_within_one_study(study_id, group)
+        for study_id, group in estimates.groupby("study_id", sort=True)
+    ]
+    return pd.concat(tables, ignore_index=True)
+
+
+def _reactor_effects_within_one_study(study_id: str, estimates: pd.DataFrame) -> pd.DataFrame:
     control = estimates.loc[estimates["treatment"] == "food_waste"]
     if len(control) < 2:
-        raise ValueError("Kozlowski reactor data need at least two food_waste control reactors")
+        raise ValueError(
+            f"Study {study_id} needs at least two food_waste control reactors"
+        )
 
     rows = []
     treatments = estimates.loc[estimates["treatment"] != "food_waste"]

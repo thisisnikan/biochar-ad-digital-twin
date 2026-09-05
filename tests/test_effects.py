@@ -43,6 +43,29 @@ def test_reactor_effect_confidence_intervals_bracket_the_point_estimate() -> Non
     assert not by_treatment.get_group("food_waste_hydrochar_240c").any()
 
 
+def test_reactor_effects_never_pool_controls_across_studies() -> None:
+    frame = pd.read_csv(REACTORS)
+    other_study = frame.copy()
+    other_study["study_id"] = "other_study"
+    other_study["source_doi"] = "10.0000/other"
+    # Different response magnitude, so a pooled control would visibly shift
+    # n_control_reactors and the fitted estimates for both studies.
+    other_study["methane_ml_g_vs"] = other_study["methane_ml_g_vs"] * 1.5
+    combined = pd.concat([frame, other_study], ignore_index=True)
+
+    effects = reactor_within_study_effects(combined)
+
+    assert effects["study_id"].nunique() == 2
+    assert effects["n_control_reactors"].eq(3).all()  # not 6, if pooled
+    kozlowski_only = reactor_within_study_effects(frame)
+    pd.testing.assert_frame_equal(
+        effects.loc[effects["study_id"] == "kozlowski_2025_scientific_reports"].reset_index(
+            drop=True
+        ),
+        kozlowski_only.reset_index(drop=True),
+    )
+
+
 def test_reactor_effects_reject_an_unreplicated_treatment() -> None:
     frame = pd.read_csv(REACTORS)
     unreplicated = frame.loc[
