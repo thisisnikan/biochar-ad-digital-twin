@@ -111,3 +111,8 @@ def test_cli_summarize_effects_reports_uncertainty_gaps(tmp_path, monkeypatch, c
     assert payload["low_replication_effects"] > 0
     assert payload["effects_without_uncertainty"] > 0
 
+    assert len(payload["per_study_output"]) == 2
+    for study_id, path in payload["per_study_output"].items():
+        study_effects = pd.read_csv(path)
+        assert (study_effects["study_id"] == study_id).all()
+

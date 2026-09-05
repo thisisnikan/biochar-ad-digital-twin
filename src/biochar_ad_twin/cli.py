@@ -93,10 +93,22 @@ def main() -> None:
         args.output.mkdir(parents=True, exist_ok=True)
         destination = args.output / "within_study_effects.csv"
         effects.to_csv(destination, index=False)
+
+        # Studies differ in substrate, biochar and lab; the combined file above
+        # is a convenience index, not a comparison table. Writing one file per
+        # study makes any cross-study read require an explicit, deliberate
+        # join instead of scanning rows that merely sit next to each other.
+        per_study_outputs = {}
+        for study_id, study_effects in effects.groupby("study_id"):
+            study_destination = args.output / f"within_study_effects__{study_id}.csv"
+            study_effects.to_csv(study_destination, index=False)
+            per_study_outputs[study_id] = str(study_destination)
+
         print(
             json.dumps(
                 {
                     "output": str(destination),
+                    "per_study_output": per_study_outputs,
                     "studies": effects["study_id"].nunique(),
                     "effects": len(effects),
                     "low_replication_effects": int(effects["low_replication"].sum()),

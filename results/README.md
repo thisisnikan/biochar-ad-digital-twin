@@ -43,6 +43,10 @@ modified-Gompertz potential and maximum rate. The rows remain stratified: the
 Kozłowski values come from reactor-level fits and retain between-reactor standard
 deviations, whereas the Valentin values are published condition parameters
 without reported parameter uncertainty. No pooled cross-study estimate is reported.
+The two studies differ in substrate, biochar and lab, so `summarize-effects` also
+writes one file per study (`within_study_effects__<study_id>.csv`); the combined
+file is a convenience index, not a table meant to be compared row-to-row across
+studies.
 
 Within Kozłowski, fitted potential is 4.5–11.9% above the same-study control,
 while fitted maximum rate is 1.6–7.4% lower. The Valentin table shows both
