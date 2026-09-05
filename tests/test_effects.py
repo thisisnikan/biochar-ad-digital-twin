@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 
 from biochar_ad_twin.effects import (
     build_within_study_effect_table,
@@ -26,6 +27,27 @@ def test_reactor_effects_fit_each_replicate_against_same_study_control() -> None
     assert (rate["percent_change"] < 0).all()
     assert np.isclose(potential["percent_change"].max(), 11.85162, atol=1e-4)
     assert np.isclose(rate["percent_change"].min(), -7.41140, atol=1e-4)
+
+
+def test_reactor_effects_reject_an_unreplicated_treatment() -> None:
+    frame = pd.read_csv(REACTORS)
+    unreplicated = frame.loc[
+        ~(
+            (frame["treatment"] == "food_waste_hydrochar_240c")
+            & (frame["replicate"].isin([2, 3]))
+        )
+    ]
+
+    with pytest.raises(ValueError, match="at least two reactors"):
+        reactor_within_study_effects(unreplicated)
+
+
+def test_parameter_effects_reject_a_non_positive_estimate() -> None:
+    frame = pd.read_csv(PARAMETERS)
+    frame.loc[frame["dose_g_l"] == 0, "potential_ml_g_vs"] = 0.0
+
+    with pytest.raises(ValueError, match="non-positive estimate"):
+        parameter_table_within_study_effects(frame)
 
 
 def test_published_parameter_effects_preserve_missing_uncertainty() -> None:

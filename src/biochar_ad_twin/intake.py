@@ -200,6 +200,16 @@ def validate_reactor_observations(frame: pd.DataFrame) -> IntakeReport:
             _issue("error", "invalid_dose", "dose_value must be present and non-negative")
         )
 
+    missing_dose_unit = data["dose_unit"].isna() | data["dose_unit"].astype(str).str.strip().eq("")
+    if missing_dose_unit.any():
+        issues.append(
+            _issue(
+                "error",
+                "missing_dose_unit",
+                f"dose_unit is empty in {int(missing_dose_unit.sum())} row(s)",
+            )
+        )
+
     invalid_units = sorted(set(data["dose_unit"].dropna().astype(str)) - ALLOWED_DOSE_UNITS)
     if invalid_units:
         issues.append(

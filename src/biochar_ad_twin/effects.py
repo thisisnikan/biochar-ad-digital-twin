@@ -11,15 +11,9 @@ import numpy as np
 import pandas as pd
 
 from .baselines import BASELINES, fit_baseline
+from .baselines import include_mask as _include_mask
 
 RESPONSES = ("potential_ml_g_vs", "max_rate_ml_g_vs_day")
-
-
-def _include_mask(frame: pd.DataFrame) -> pd.Series:
-    inclusion = frame["included_in_benchmark"]
-    if inclusion.dtype == bool:
-        return inclusion
-    return inclusion.astype(str).str.lower().isin({"true", "1", "yes"})
 
 
 def _reactor_kinetic_estimates(frame: pd.DataFrame) -> pd.DataFrame:
@@ -68,18 +62,25 @@ def reactor_within_study_effects(frame: pd.DataFrame) -> pd.DataFrame:
     """Estimate biochar effects from independently fitted reactor trajectories."""
     estimates = _reactor_kinetic_estimates(frame)
     control = estimates.loc[estimates["treatment"] == "food_waste"]
-    if control.empty:
-        raise ValueError("Kozlowski reactor data need the food_waste control")
+    if len(control) < 2:
+        raise ValueError("Kozlowski reactor data need at least two food_waste control reactors")
 
     rows = []
     treatments = estimates.loc[estimates["treatment"] != "food_waste"]
     for treatment, group in treatments.groupby("treatment", sort=True):
+        if len(group) < 2:
+            raise ValueError(f"Treatment {treatment} needs at least two reactors")
         first = group.iloc[0]
         for response in RESPONSES:
             treatment_values = group[response].to_numpy(float)
             control_values = control[response].to_numpy(float)
             treatment_mean = float(treatment_values.mean())
             control_mean = float(control_values.mean())
+            if treatment_mean <= 0 or control_mean <= 0:
+                raise ValueError(
+                    f"Treatment {treatment} response {response} has a non-positive mean; "
+                    "cannot compute a log response ratio"
+                )
             log_ratio = float(np.log(treatment_mean / control_mean))
             rows.append(
                 {
@@ -133,6 +134,11 @@ def parameter_table_within_study_effects(frame: pd.DataFrame) -> pd.DataFrame:
         for response in RESPONSES:
             treatment_estimate = float(treatment[response])
             control_estimate = float(control[response])
+            if treatment_estimate <= 0 or control_estimate <= 0:
+                raise ValueError(
+                    f"Dose {treatment['dose_g_l']:g} response {response} has a non-positive "
+                    "estimate; cannot compute a log response ratio"
+                )
             log_ratio = float(np.log(treatment_estimate / control_estimate))
             rows.append(
                 {
