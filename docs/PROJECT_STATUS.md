@@ -1,6 +1,6 @@
 # Project status
 
-Last reviewed: 3 September 2026
+Last reviewed: 5 September 2026
 
 ## Readiness snapshot
 
@@ -9,6 +9,7 @@ Last reviewed: 3 September 2026
 | Package and CLI | Working | Installable package with modelling, benchmarking, effect-summary and intake-validation commands |
 | Automated quality | Working | Ruff plus automated tests on Python 3.10 and 3.12 in GitHub Actions |
 | Data contribution gate | Working | Minimum reactor-time-point contract with machine-readable errors and evidence-limit warnings |
+| Real-data contract import | Reproducible, source conflict flagged | 7,575 observations from 15 Kozłowski reactors, including individual blanks; [validation and gaps](../results/intake/README.md) |
 | Synthetic workflow | Reproducible | Labelled synthetic input and deterministic reporting pipeline |
 | Open experimental benchmark | Reproducible | Kozłowski et al. (2025) reactor-level trajectories and reference output |
 | Zhang integration | Limited by source | Hash-verified private ingestion and summary analysis; original triplicates were lost |

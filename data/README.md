@@ -55,6 +55,21 @@ python scripts/build_kozlowski_2025_dataset.py
 
 The script verifies the source hash before parsing it.
 
+### Complete reactor-observation export
+
+`experimental/kozlowski_2025_reactor_observations.csv.gz` adds all three individual
+inoculum-only blank trajectories to the existing twelve substrate reactors. It
+contains 7,575 source-linked observations in the minimum intake contract, with
+source metadata and correction inputs retained as extra columns. Blanks have no
+substrate-normalized yield. The original benchmark file and exclusions are preserved.
+
+The exporter also records a source conflict in the food-waste control's carbon
+mass/dose cells. Zero canonical dose follows the established treatment mapping;
+the conflicting source values remain visible pending author clarification.
+
+See the [intake report and gap list](../results/intake/README.md) for commands,
+field interpretation, validation findings and scientific limitations.
+
 ## Valentin & Białowiec (2024)
 
 `experimental/valentin_bialowiec_2024_parameters.csv` transcribes the five dose

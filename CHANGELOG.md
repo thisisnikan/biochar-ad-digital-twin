@@ -2,6 +2,10 @@
 
 ## 2026-09-05
 
+- Added a hash-verified real-data intake export for all 15 Kozłowski reactors,
+  including individual blanks, cell references, VS denominators and source-dose conflicts.
+- Added the deterministic compressed CSV, validation JSON and remaining-evidence report;
+  preserved the original benchmark CSV and exclusions.
 - Hardened the experimental intake gate against empty files, non-finite numeric values,
   missing dose units and positive doses without a physical unit.
 - Compare parsed times and metadata consistently while preserving source values.

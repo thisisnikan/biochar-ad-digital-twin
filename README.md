@@ -178,6 +178,14 @@ Passing this structural gate does not turn a limited design into causal or globa
 predictive evidence. Field definitions and warnings are documented in
 [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md).
 
+The [first complete real-data intake](results/intake/README.md) contains all 15
+Kozłowski source reactors, including individual inoculum blanks, traceable cell
+references, validation findings and an explicit evidence-gap report:
+
+```bash
+biochar-ad validate-intake data/experimental/kozlowski_2025_reactor_observations.csv.gz
+```
+
 ## Presentation
 
 An animated, single-file HTML deck at [`presentation/index.html`](presentation/index.html)
