@@ -50,6 +50,16 @@ parameters increasing with dose. The contrast motivates context-aware modelling;
 it does not identify whether material, substrate, dose or another study difference
 caused the disagreement.
 
+Every row now also carries a 95% confidence interval on `percent_change` (delta
+method on the log response ratio) and a `low_replication` flag. Two of the six
+Kozłowski rows — the hydrochar and torrefaction maximum-rate effects — have a CI
+that crosses zero, so their point-estimate direction should not be read as a
+settled effect; this holds even for hydrochar, which has 3 valid reactors, so
+crossing zero is not only a low-replication artifact here. All eight
+Valentin & Białowiec rows are flagged `low_replication` and carry no CI at all:
+the published table reports point estimates only, with no per-replicate
+standard deviation.
+
 ```bash
 biochar-ad summarize-effects --output results/effects
 ```

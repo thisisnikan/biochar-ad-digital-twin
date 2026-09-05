@@ -15,6 +15,52 @@ from .baselines import include_mask as _include_mask
 
 RESPONSES = ("potential_ml_g_vs", "max_rate_ml_g_vs_day")
 
+# Normal-approximation multiplier for a 95% CI. A delta-method SE on a ratio
+# of two small-sample means is itself an approximation, so a t-based interval
+# would overstate the precision of this already-approximate SE.
+_Z95 = 1.959963985
+
+# Below this many reactors per arm, a percent-change point estimate is
+# reported alongside its CI but should not be read as a settled effect size.
+MINIMUM_REPLICATES_FOR_CONFIDENT_EFFECT = 3
+
+
+def _log_ratio_standard_error(
+    treatment_mean: float,
+    treatment_sd: float,
+    n_treatment: int,
+    control_mean: float,
+    control_sd: float,
+    n_control: int,
+) -> float:
+    """Delta-method SE for ln(treatment_mean / control_mean).
+
+    Standard response-ratio effect-size variance from meta-analysis practice
+    (Hedges, Gurevitch & Curtis 1999); assumes independent treatment and
+    control samples, which holds here because each is a separate reactor.
+    """
+    return float(
+        np.sqrt(
+            (treatment_sd**2) / (n_treatment * treatment_mean**2)
+            + (control_sd**2) / (n_control * control_mean**2)
+        )
+    )
+
+
+def _log_ratio_ci_columns(
+    log_ratio: float,
+    standard_error: float,
+) -> dict[str, float]:
+    ci_low = log_ratio - _Z95 * standard_error
+    ci_high = log_ratio + _Z95 * standard_error
+    return {
+        "log_response_ratio_se": standard_error,
+        "log_response_ratio_ci95_low": ci_low,
+        "log_response_ratio_ci95_high": ci_high,
+        "percent_change_ci95_low": float(100 * np.expm1(ci_low)),
+        "percent_change_ci95_high": float(100 * np.expm1(ci_high)),
+    }
+
 
 def _reactor_kinetic_estimates(frame: pd.DataFrame) -> pd.DataFrame:
     required = {
@@ -81,7 +127,14 @@ def reactor_within_study_effects(frame: pd.DataFrame) -> pd.DataFrame:
                     f"Treatment {treatment} response {response} has a non-positive mean; "
                     "cannot compute a log response ratio"
                 )
+            treatment_sd = float(treatment_values.std(ddof=1))
+            control_sd = float(control_values.std(ddof=1))
+            n_treatment = len(treatment_values)
+            n_control = len(control_values)
             log_ratio = float(np.log(treatment_mean / control_mean))
+            standard_error = _log_ratio_standard_error(
+                treatment_mean, treatment_sd, n_treatment, control_mean, control_sd, n_control
+            )
             rows.append(
                 {
                     "study_id": first["study_id"],
@@ -97,12 +150,15 @@ def reactor_within_study_effects(frame: pd.DataFrame) -> pd.DataFrame:
                     "response": response,
                     "treatment_estimate": treatment_mean,
                     "control_estimate": control_mean,
-                    "treatment_sd": float(treatment_values.std(ddof=1)),
-                    "control_sd": float(control_values.std(ddof=1)),
+                    "treatment_sd": treatment_sd,
+                    "control_sd": control_sd,
                     "log_response_ratio": log_ratio,
                     "percent_change": float(100 * np.expm1(log_ratio)),
-                    "n_treatment_reactors": len(treatment_values),
-                    "n_control_reactors": len(control_values),
+                    **_log_ratio_ci_columns(log_ratio, standard_error),
+                    "n_treatment_reactors": n_treatment,
+                    "n_control_reactors": n_control,
+                    "low_replication": n_treatment < MINIMUM_REPLICATES_FOR_CONFIDENT_EFFECT
+                    or n_control < MINIMUM_REPLICATES_FOR_CONFIDENT_EFFECT,
                     "estimate_level": "reactor_level_gompertz_fit_mean",
                     "replicate_level_available": True,
                     "supports_cross_study_pooling": False,
@@ -157,8 +213,14 @@ def parameter_table_within_study_effects(frame: pd.DataFrame) -> pd.DataFrame:
                     "control_sd": np.nan,
                     "log_response_ratio": log_ratio,
                     "percent_change": float(100 * np.expm1(log_ratio)),
+                    "log_response_ratio_se": np.nan,
+                    "log_response_ratio_ci95_low": np.nan,
+                    "log_response_ratio_ci95_high": np.nan,
+                    "percent_change_ci95_low": np.nan,
+                    "percent_change_ci95_high": np.nan,
                     "n_treatment_reactors": treatment.get("n_reactors", np.nan),
                     "n_control_reactors": control.get("n_reactors", np.nan),
+                    "low_replication": True,
                     "estimate_level": "published_condition_parameter",
                     "replicate_level_available": False,
                     "supports_cross_study_pooling": False,

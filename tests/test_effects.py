@@ -29,6 +29,20 @@ def test_reactor_effects_fit_each_replicate_against_same_study_control() -> None
     assert np.isclose(rate["percent_change"].min(), -7.41140, atol=1e-4)
 
 
+def test_reactor_effect_confidence_intervals_bracket_the_point_estimate() -> None:
+    effects = reactor_within_study_effects(pd.read_csv(REACTORS))
+
+    assert (effects["percent_change_ci95_low"] <= effects["percent_change"]).all()
+    assert (effects["percent_change"] <= effects["percent_change_ci95_high"]).all()
+    assert effects["log_response_ratio_se"].gt(0).all()
+
+    # n=2 treatments must be flagged; the n=3 hydrochar treatment must not be.
+    by_treatment = effects.groupby("treatment")["low_replication"]
+    assert by_treatment.get_group("food_waste_pyrolysis_600c").all()
+    assert by_treatment.get_group("food_waste_torrefaction_240c").all()
+    assert not by_treatment.get_group("food_waste_hydrochar_240c").any()
+
+
 def test_reactor_effects_reject_an_unreplicated_treatment() -> None:
     frame = pd.read_csv(REACTORS)
     unreplicated = frame.loc[
@@ -56,6 +70,8 @@ def test_published_parameter_effects_preserve_missing_uncertainty() -> None:
     assert effects["dose_g_l"].nunique() == 4
     assert not effects["replicate_level_available"].any()
     assert effects[["treatment_sd", "control_sd"]].isna().all().all()
+    assert effects[["percent_change_ci95_low", "percent_change_ci95_high"]].isna().all().all()
+    assert effects["low_replication"].all()
     assert (effects["percent_change"] > 0).all()
 
     rate_at_eight = effects.query(

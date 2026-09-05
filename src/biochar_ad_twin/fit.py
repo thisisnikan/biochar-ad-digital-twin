@@ -13,6 +13,12 @@ PARAMETER_NAMES = tuple(asdict(KineticParameters()).keys())
 LOWER = np.array([50, 1, 0, -1, -1, -1, -1, 1.01], dtype=float)
 UPPER = np.array([1000, 100, 15, 1, 0.5, 1, 0.5, 4], dtype=float)
 
+# Above this absolute pairwise correlation, two parameters are considered
+# practically confounded: the data cannot tell their individual values apart,
+# only some combination of them (Bates & Watts 1988, ch. 3 on curvature and
+# near-collinearity in nonlinear least squares).
+IDENTIFIABILITY_CORRELATION_THRESHOLD = 0.95
+
 
 def _unpack(values: np.ndarray) -> KineticParameters:
     return KineticParameters(**dict(zip(PARAMETER_NAMES, values, strict=True)))
@@ -35,8 +41,58 @@ def predict_frame(frame: pd.DataFrame, parameters: KineticParameters) -> np.ndar
     return prediction
 
 
+def parameter_covariance(solution, n_observations: int) -> np.ndarray:
+    """Approximate the parameter covariance matrix at a least_squares solution.
+
+    Uses the standard nonlinear-least-squares approximation
+    ``cov = residual_variance * pinv(J^T J)`` (Bates & Watts 1988), where ``J``
+    is the Jacobian of the residuals at the solution. A pseudo-inverse is used
+    because near-confounded parameters make ``J^T J`` close to singular; that
+    near-singularity is itself the identifiability signal callers should read
+    from the resulting correlations, not an error to hide.
+    """
+
+    jacobian = solution.jac
+    n_params = jacobian.shape[1]
+    degrees_of_freedom = max(n_observations - n_params, 1)
+    residual_variance = float(np.sum(solution.fun**2)) / degrees_of_freedom
+    return residual_variance * np.linalg.pinv(jacobian.T @ jacobian)
+
+
+def parameter_correlation_matrix(covariance: np.ndarray) -> pd.DataFrame:
+    """Turn a parameter covariance matrix into a labelled correlation matrix."""
+
+    standard_error = np.sqrt(np.clip(np.diag(covariance), 0, None))
+    outer = np.outer(standard_error, standard_error)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        correlation = np.where(outer > 0, covariance / outer, np.nan)
+    return pd.DataFrame(correlation, index=PARAMETER_NAMES, columns=PARAMETER_NAMES)
+
+
+def _identifiability_metrics(solution, n_observations: int) -> dict[str, float]:
+    covariance = parameter_covariance(solution, n_observations)
+    correlation = parameter_correlation_matrix(covariance).to_numpy()
+    n_params = correlation.shape[0]
+    off_diagonal = correlation[~np.eye(n_params, dtype=bool)]
+    off_diagonal = off_diagonal[np.isfinite(off_diagonal)]
+    max_correlation = float(np.max(np.abs(off_diagonal))) if off_diagonal.size else float("nan")
+    gram = solution.jac.T @ solution.jac
+    condition_number = float(np.linalg.cond(gram)) if np.all(np.isfinite(gram)) else float("inf")
+    return {
+        "max_parameter_correlation": max_correlation,
+        "parameter_gram_condition_number": condition_number,
+    }
+
+
 def fit_global(frame: pd.DataFrame) -> tuple[KineticParameters, dict[str, float]]:
-    """Fit all batch conditions simultaneously and return diagnostic metrics."""
+    """Fit all batch conditions simultaneously and return diagnostic metrics.
+
+    ``max_parameter_correlation`` and ``parameter_gram_condition_number`` in the
+    returned metrics are practical-identifiability diagnostics, not goodness of
+    fit: a high correlation (beyond ``IDENTIFIABILITY_CORRELATION_THRESHOLD``)
+    or condition number means the data cannot separate two or more of the
+    eight kinetic parameters, even when RMSE/R-squared look good.
+    """
 
     frame = frame.reset_index(drop=True).copy()
     validate_dataset(frame)
@@ -57,6 +113,7 @@ def fit_global(frame: pd.DataFrame) -> tuple[KineticParameters, dict[str, float]
         "r_squared": float(1 - np.sum(errors**2) / ss_total),
         "n_observations": float(len(frame)),
     }
+    metrics.update(_identifiability_metrics(solution, len(observed)))
     return parameters, metrics
 
 

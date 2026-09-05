@@ -11,6 +11,21 @@ release model while the public API remains experimental.
 
 ## Unreleased
 
+- Fixed silent data-validation and analysis gaps: a missing `dose_unit` no longer passes
+  intake validation, `batch_id` nulls no longer bypass `validate_dataset`, unreplicated
+  treatments and non-positive response means are rejected instead of producing NaN/Inf,
+  `leave_one_batch_out` fails clearly instead of crashing on exactly two batches, the
+  fitted-curves plot no longer silently drops a third temperature group, and the Zhang
+  day-10 lookup and Durbin-Watson calculation no longer crash or divide by zero.
+- Added parameter-identifiability diagnostics to `fit_global` (`max_parameter_correlation`,
+  `parameter_gram_condition_number`), surfaced as a CLI warning when parameters are
+  practically confounded.
+- Split `leave_one_batch_out` into interior vs. boundary (`is_boundary_condition`) held-out
+  error instead of pooling interpolation and extrapolation performance into one mean.
+- Made residual-bootstrap uncertainty available on real `fit` runs, not only `demo`
+  (`--bootstrap`, opt-in and off by default for `fit`).
+- Added 95% confidence intervals (delta method on the log response ratio) and a
+  `low_replication` flag to every effect size in `summarize-effects`.
 - Reworked the presentation deck to chart the actual committed results (Kozłowski 2025
   kinetic-baseline comparison and the Valentin & Białowiec 2024 dose-response challenge)
   instead of illustrative figures, so the deck argues from data.

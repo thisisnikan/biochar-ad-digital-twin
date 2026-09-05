@@ -73,22 +73,41 @@ def compare_models(frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def leave_one_batch_out(frame: pd.DataFrame) -> pd.DataFrame:
-    """Estimate extrapolation error by withholding every experimental batch once."""
+    """Estimate held-out error by withholding every experimental batch once.
+
+    Most held-out batches sit inside the observed dose/temperature range, so
+    their error mainly measures interpolation, not extrapolation. Each row is
+    tagged ``is_boundary_condition`` when the held-out batch is at the min or
+    max of the observed dose or temperature range; only those rows say
+    anything about extrapolation to untested conditions, and the two groups
+    should be reported separately rather than pooled into one mean.
+    """
     if frame["batch_id"].nunique() < 3:
         raise ValueError(
             "At least three batch conditions are required for leave-one-batch-out "
             "validation (two must remain after holding one out)"
         )
+    batch_conditions = frame.drop_duplicates("batch_id").set_index("batch_id")
+    dose_bounds = (batch_conditions["dose_g_l"].min(), batch_conditions["dose_g_l"].max())
+    temperature_bounds = (
+        batch_conditions["temperature_c"].min(),
+        batch_conditions["temperature_c"].max(),
+    )
     rows = []
     for batch_id in frame["batch_id"].drop_duplicates():
         train = frame.loc[frame["batch_id"] != batch_id].reset_index(drop=True)
         test = frame.loc[frame["batch_id"] == batch_id].reset_index(drop=True)
         parameters, _ = fit_global(train)
         residual = test["methane_ml_g_vs"].to_numpy(float) - predict_frame(test, parameters)
+        condition = batch_conditions.loc[batch_id]
+        is_boundary_condition = bool(
+            condition["dose_g_l"] in dose_bounds or condition["temperature_c"] in temperature_bounds
+        )
         rows.append(
             {
                 "held_out_batch": batch_id,
                 "n_test": len(test),
+                "is_boundary_condition": is_boundary_condition,
                 "rmse_ml_g_vs": float(np.sqrt(np.mean(residual**2))),
                 "mae_ml_g_vs": float(np.mean(np.abs(residual))),
             }

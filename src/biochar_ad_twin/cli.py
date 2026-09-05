@@ -12,7 +12,7 @@ from .baselines import compare_experimental_baselines
 from .data import generate_demo_dataset
 from .effects import build_within_study_effect_table
 from .external_validation import compare_external_dose_responses
-from .fit import bootstrap_parameters, fit_global
+from .fit import IDENTIFIABILITY_CORRELATION_THRESHOLD, bootstrap_parameters, fit_global
 from .intake import validate_reactor_observations
 from .report import save_report
 
@@ -26,6 +26,13 @@ def build_parser() -> argparse.ArgumentParser:
     fit = commands.add_parser("fit", help="Fit a CSV dataset")
     fit.add_argument("csv", type=Path)
     fit.add_argument("--output", type=Path, default=Path("outputs"))
+    fit.add_argument(
+        "--bootstrap",
+        type=int,
+        default=0,
+        help="Residual-bootstrap iterations for parameter uncertainty (0 disables; slow "
+        "on large datasets, so it is opt-in here unlike the demo command)",
+    )
     benchmark = commands.add_parser(
         "benchmark-experimental",
         help="Compare transparent kinetic baselines on replicate-level experimental BMP data",
@@ -92,6 +99,10 @@ def main() -> None:
                     "output": str(destination),
                     "studies": effects["study_id"].nunique(),
                     "effects": len(effects),
+                    "low_replication_effects": int(effects["low_replication"].sum()),
+                    "effects_without_uncertainty": int(
+                        effects["log_response_ratio_se"].isna().sum()
+                    ),
                     "cross_study_pooling_performed": False,
                 },
                 indent=2,
@@ -143,23 +154,39 @@ def main() -> None:
     comparison = compare_models(frame)
     comparison.to_csv(args.output / "model_comparison.csv", index=False)
 
-    mean_held_out_rmse = None
+    mean_held_out_rmse_interior = None
+    mean_held_out_rmse_boundary = None
     if frame["batch_id"].nunique() >= 3:
         validation = leave_one_batch_out(frame)
         validation.to_csv(args.output / "leave_one_batch_out.csv", index=False)
-        mean_held_out_rmse = validation["rmse_ml_g_vs"].mean()
-    if args.command == "demo":
+        interior = validation.loc[~validation["is_boundary_condition"], "rmse_ml_g_vs"]
+        boundary = validation.loc[validation["is_boundary_condition"], "rmse_ml_g_vs"]
+        mean_held_out_rmse_interior = float(interior.mean()) if len(interior) else None
+        mean_held_out_rmse_boundary = float(boundary.mean()) if len(boundary) else None
+
+    if args.bootstrap > 0:
         bootstrap = bootstrap_parameters(frame, iterations=args.bootstrap)
         bootstrap.describe(percentiles=[0.025, 0.5, 0.975]).to_csv(
             args.output / "bootstrap_summary.csv"
+        )
+
+    identifiability_warning = None
+    if metrics["max_parameter_correlation"] >= IDENTIFIABILITY_CORRELATION_THRESHOLD:
+        identifiability_warning = (
+            "At least two of the eight kinetic parameters are practically confounded "
+            f"(|correlation| >= {IDENTIFIABILITY_CORRELATION_THRESHOLD}): the data cannot "
+            "separate their individual values, only some combination of them. Point "
+            "estimates for those parameters should not be interpreted individually."
         )
     print(
         json.dumps(
             {
                 "parameters": asdict(parameters),
                 "metrics": metrics,
+                "identifiability_warning": identifiability_warning,
                 "best_model_by_aicc": comparison.iloc[0]["model"],
-                "mean_held_out_rmse_ml_g_vs": mean_held_out_rmse,
+                "mean_held_out_rmse_interior_ml_g_vs": mean_held_out_rmse_interior,
+                "mean_held_out_rmse_boundary_ml_g_vs": mean_held_out_rmse_boundary,
             },
             indent=2,
         )
