@@ -141,9 +141,13 @@ def main() -> None:
     parameters, metrics = fit_global(frame)
     save_report(frame, parameters, metrics, args.output)
     comparison = compare_models(frame)
-    validation = leave_one_batch_out(frame)
     comparison.to_csv(args.output / "model_comparison.csv", index=False)
-    validation.to_csv(args.output / "leave_one_batch_out.csv", index=False)
+
+    mean_held_out_rmse = None
+    if frame["batch_id"].nunique() >= 3:
+        validation = leave_one_batch_out(frame)
+        validation.to_csv(args.output / "leave_one_batch_out.csv", index=False)
+        mean_held_out_rmse = validation["rmse_ml_g_vs"].mean()
     if args.command == "demo":
         bootstrap = bootstrap_parameters(frame, iterations=args.bootstrap)
         bootstrap.describe(percentiles=[0.025, 0.5, 0.975]).to_csv(
@@ -155,7 +159,7 @@ def main() -> None:
                 "parameters": asdict(parameters),
                 "metrics": metrics,
                 "best_model_by_aicc": comparison.iloc[0]["model"],
-                "mean_held_out_rmse_ml_g_vs": validation["rmse_ml_g_vs"].mean(),
+                "mean_held_out_rmse_ml_g_vs": mean_held_out_rmse,
             },
             indent=2,
         )

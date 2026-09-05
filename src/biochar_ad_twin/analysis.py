@@ -74,6 +74,11 @@ def compare_models(frame: pd.DataFrame) -> pd.DataFrame:
 
 def leave_one_batch_out(frame: pd.DataFrame) -> pd.DataFrame:
     """Estimate extrapolation error by withholding every experimental batch once."""
+    if frame["batch_id"].nunique() < 3:
+        raise ValueError(
+            "At least three batch conditions are required for leave-one-batch-out "
+            "validation (two must remain after holding one out)"
+        )
     rows = []
     for batch_id in frame["batch_id"].drop_duplicates():
         train = frame.loc[frame["batch_id"] != batch_id].reset_index(drop=True)
